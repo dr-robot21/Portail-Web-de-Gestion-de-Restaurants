@@ -1,0 +1,46 @@
+.primaryBtn {
+    padding: 12px 16px;
+    background-color: var(--accent);
+    border-radius: 8px;
+    outline: none;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;           /* bumped from 4px for better visual breathing room */
+    cursor: pointer;
+    color: #FFFFFF;     /* ensures text inherits properly */
+    font-family: inherit;
+    font-size: 0.875rem;
+    line-height: 1;
+    transition: transform 150ms ease, box-shadow 150ms ease, filter 150ms ease;
+    will-change: transform;
+}
+
+.primaryBtn svg {
+    width: 11px;
+    height: 11px;
+    flex-shrink: 0;
+}
+
+.primaryBtn .content {
+    font-weight: 600;   /* slightly less aggressive than bold */
+    letter-spacing: 1px;
+}
+
+.primaryBtn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--accent) 30%, transparent);
+    filter: brightness(1.05);
+}
+
+.primaryBtn:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 4px color-mix(in srgb, var(--accent) 20%, transparent);
+    filter: brightness(0.98);
+    transition-duration: 50ms;
+}
+
+.primaryBtn:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--accent) 60%, #000);
+    outline-offset: 2px;
+}

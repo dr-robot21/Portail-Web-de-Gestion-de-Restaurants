@@ -1,0 +1,11 @@
+:root {
+  --accent: #c0392b;
+  --accent-d1: #9E2016;
+  --side-bar-bg: #4e6073;
+  --bg-color: #f8f9fa;
+  --header-border-clr: #e1bfb951;
+  --text-color: #59413d;
+  --box-border: 1px solid  #e1bfb934;
+  --box-border-l: 1px solid  #e1bfb91A;
+  --shadow: 0px 4px 6px -1px #0000001A , 0px 2px 4px -2px #0000001A;
+}

@@ -1,0 +1,317 @@
+.noResultMsg {
+  width: 100%;
+  padding: 1rem;
+  color: var(--text-color);
+  font-size: .875rem;
+}
+
+
+
+.header {
+  background-color: #fff;
+  border-bottom: 2px solid var(--header-border-clr);
+  padding: .75rem 1.5rem;
+}
+
+.header .container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  justify-content: space-between;
+}
+
+.headerSearch {
+  flex: 1;
+  max-width: 360px;
+}
+
+.searchBox {
+  position: relative;
+  width: 100%;
+}
+
+.searchWrapper:focus-within {
+  background-color: #fff;
+  box-shadow: rgba(0, 0, 0, 0.15) 0px 5px 15px 0px;
+}
+
+.searchBox .searchWrapper {
+  background-color: #f3f4f5;
+  width: 100%;
+  height: 40px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+}
+
+.searchWrapper input {
+  background-color: transparent;
+  height: 100%;
+  width: 100%;
+  outline: none;
+  border: none;
+  padding: 0 50px;
+}
+
+.searchWrapper label {
+  width: 24px;
+  height: 24px;
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.searchWrapper label svg {
+  width: 100%;
+  height: 100%;
+  color: var(--text-color);
+}
+
+.searchRslts {
+  width: 100%;
+  position: absolute;
+  top: 50px;
+  border-radius: 8px;
+  background-color: #fff;
+  border: var(--box-border);
+  box-shadow: var(--shadow);
+  max-height: 264px;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
+/* Webkit */
+.searchRslts::-webkit-scrollbar,
+.notificationsDropDown .body::-webkit-scrollbar
+{
+  width: 6px;
+}
+
+.searchRslts::-webkit-scrollbar-track, 
+.notificationsDropDown .body::-webkit-scrollbar-track
+{
+  background: transparent;
+  margin: 8px 0; /* respects the 8px border-radius */
+}
+
+.searchRslts::-webkit-scrollbar-thumb, 
+.notificationsDropDown .body::-webkit-scrollbar-thumb
+{
+  background: #d1d5db;
+  border-radius: 3px;
+}
+
+.searchRslts::-webkit-scrollbar-thumb:hover,
+.notificationsDropDown .body::-webkit-scrollbar-thumb:hover
+{
+  background: #9ca3af;
+}
+
+.searchRslts::-webkit-scrollbar-corner,
+.notificationsDropDown .body::-webkit-scrollbar-corner
+{
+  background: transparent;
+}
+
+.searchRslts .rslt {
+  display: block;
+  padding: 1rem;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid #eeeeee6f;
+}
+
+.searchRslts .rslt:hover {
+  background-color: #eee;
+}
+
+.rslt svg {
+  width: 20px;
+  height: 20px;
+  color: var(--text-color);
+}
+
+.rslt .content {
+  color: #000;
+  font-size: 14px;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.headerActions .notificationsDropDown {
+  position: relative;
+}
+
+
+
+.notificationsDropDown .icon {
+  width: 40px;
+  height: 40px;
+  position: relative;
+  padding: 4px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.notificationsDropDown .icon:hover {
+  background-color: #eeeeee8c;
+}
+
+.notificationsDropDown .icon::before {
+  content: '';
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--accent);
+}
+
+
+.notificationsDropDown .icon svg {
+  width: 100%;
+  height: 100%;
+  fill: var(--text-color);
+}
+
+.notificationsDropDown .dropDown {
+  position: absolute;
+  display: none;
+  right: -30px;
+  background-color: #FFF;
+  border: var(--box-border);
+  box-shadow: var(--shadow);
+  border-radius: 8px;
+  overflow: hidden;
+  width: 320px;
+}
+
+.notificationsDropDown .dropDown.active {
+  display: block;
+}
+
+.notificationsDropDown button ,
+.notificationsDropDown .footer a
+{
+  all: unset;
+  color: var(--accent-d1);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.notificationsDropDown button:hover, 
+.notificationsDropDown .footer a:hover
+{
+  text-decoration: underline;
+}
+
+.notificationsDropDown .heading {
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: var(--box-border);
+}
+
+.notificationsDropDown .heading h3 {
+  font-size: 1rem;
+}
+.notificationsDropDown .heading button {
+  font-size: .75rem;
+}
+
+.notificationsDropDown .body {
+  overflow: auto;
+  max-height: 202px;
+}
+
+
+.notificationsDropDown .notification {
+  all: unset;
+  padding: 1rem;
+  display: flex;
+  align-items: first baseline;
+  gap: 12px;
+  border-bottom: var(--box-border-l);
+  cursor: pointer;
+}
+
+.notificationsDropDown .notification:hover {
+  background-color: #eee;
+}
+
+.notificationsDropDown .notification .status {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.notificationsDropDown .notification.new .status {
+  background-color: var(--accent-d1);
+}
+
+.notificationsDropDown .notification.new .infos {
+  flex: 1;
+}
+
+.notificationsDropDown .notification h3 {
+  width: 100%;
+  font-weight: 400;
+  font-size: .85rem;
+  margin-bottom: 2px;
+  color: #191C1D;
+}
+
+.notificationsDropDown .notification.new h3 {
+  font-weight: 600;
+}
+
+.notificationsDropDown .notification p {
+  font-size: .75rem;
+  color: var(--text-color);
+}
+
+.notificationsDropDown .footer {
+  padding: 1rem;
+  border-top: var(--box-border);
+}
+
+.notificationsDropDown .footer a {
+  display: block;
+  width: 100%;
+  text-align: center;
+  font-size: 0.875rem;
+  font-weight: 400;
+}
+
+.headerActions .devider {
+    width: 1px;
+    height: 32px;
+    background-color: var(--header-border-clr);
+}
+
+.headerActions .profile {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.headerActions .profile:hover {
+    border: 1px solid #ccc;
+}
+
+.headerActions .profile img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
