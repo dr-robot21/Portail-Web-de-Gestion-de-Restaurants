@@ -1,0 +1,102 @@
+.menu-management {
+  padding: var(--spacing-6) var(--spacing-8);
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.menu-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--spacing-6);
+}
+
+.menu-title {
+  font-family: var(--font-family);
+  font-size: var(--font-2xl);
+  font-weight: var(--weight-bold);
+  color: var(--text-primary);
+  margin: 0 0 var(--spacing-1) 0;
+}
+
+.menu-subtitle {
+  font-family: var(--font-family);
+  font-size: var(--font-sm);
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.menu-alert-floating {
+  position: absolute;
+  top: var(--spacing-6);
+  right: var(--spacing-8);
+  width: 320px;
+  z-index: 10;
+  box-shadow: var(--shadow-md);
+}
+
+.menu-search-bar {
+  margin-bottom: var(--spacing-6);
+}
+
+.menu-tabs-container {
+  margin-bottom: var(--spacing-6);
+}
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--spacing-6);
+  margin-bottom: var(--spacing-10);
+}
+
+.menu-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--spacing-2);
+  margin-top: var(--spacing-10);
+  padding-bottom: var(--spacing-10);
+}
+
+.menu-pagination-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: var(--spacing-2) var(--spacing-4);
+  font-family: var(--font-family);
+  font-size: var(--font-sm);
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.menu-pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.menu-pagination-page {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-family);
+  font-size: var(--font-sm);
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.menu-pagination-page--active {
+  background-color: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.menu-pagination-dots {
+  color: var(--text-secondary);
+}

@@ -1,0 +1,286 @@
+.restaurant-form-page {
+  padding: var(--spacing-6) var(--spacing-8);
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.restaurant-form-breadcrumb {
+  font-family: var(--font-family);
+  font-size: var(--font-sm);
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-4);
+}
+
+.restaurant-form-breadcrumb a {
+  color: var(--text-secondary);
+  text-decoration: none;
+}
+
+.restaurant-form-breadcrumb a:hover {
+  text-decoration: underline;
+}
+
+.restaurant-form-breadcrumb span {
+  color: var(--text-primary);
+  font-weight: var(--weight-medium);
+}
+
+.restaurant-form-header {
+  margin-bottom: var(--spacing-6);
+}
+
+.restaurant-form-title {
+  font-family: var(--font-family);
+  font-size: var(--font-2xl);
+  font-weight: var(--weight-bold);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.restaurant-form-card {
+  margin-bottom: var(--spacing-6);
+}
+
+.restaurant-form-card-title {
+  display: flex;
+  align-items: center;
+  font-family: var(--font-family);
+  font-size: var(--font-lg);
+  font-weight: var(--weight-bold);
+  color: var(--text-primary);
+  margin: 0 0 var(--spacing-6) 0;
+  padding-bottom: var(--spacing-4);
+  border-bottom: 1px solid var(--border);
+}
+
+.restaurant-form-grid-info {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: var(--spacing-6);
+}
+
+.restaurant-form-upload-zone {
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-md);
+  height: 160px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--background);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.restaurant-form-upload-zone:hover {
+  background-color: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.restaurant-form-upload-icon {
+  margin-bottom: var(--spacing-2);
+}
+
+.restaurant-form-upload-text {
+  font-family: var(--font-family);
+  font-size: var(--font-sm);
+  color: var(--text-primary);
+}
+
+.restaurant-form-upload-subtext {
+  font-family: var(--font-family);
+  font-size: var(--font-xs);
+  color: var(--text-secondary);
+}
+
+.restaurant-form-image-preview {
+  height: 160px;
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--border);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.restaurant-form-image-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.restaurant-form-select {
+  width: 100%;
+  border: none;
+  background: transparent;
+  padding: var(--spacing-3) var(--spacing-4);
+  font-family: var(--font-family);
+  font-size: var(--font-md);
+  color: var(--text-primary);
+  outline: none;
+}
+
+.restaurant-form-row {
+  display: flex;
+  gap: var(--spacing-4);
+}
+
+.restaurant-form-col {
+  flex: 1;
+}
+
+.restaurant-form-hours-row {
+  display: flex;
+  align-items: flex-start;
+  padding: var(--spacing-4) 0;
+  border-bottom: 1px dashed var(--border);
+}
+
+.restaurant-form-hours-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.restaurant-form-hours-day {
+  width: 150px;
+  font-family: var(--font-family);
+  font-size: var(--font-sm);
+  font-weight: var(--weight-bold);
+  color: var(--text-primary);
+  padding-top: var(--spacing-2);
+}
+
+.restaurant-form-hours-status {
+  width: 120px;
+  padding-top: var(--spacing-2);
+}
+
+.restaurant-form-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-family: var(--font-family);
+  font-size: var(--font-sm);
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.restaurant-form-checkbox-label input[type="checkbox"] {
+  accent-color: var(--error-text);
+  width: 16px;
+  height: 16px;
+}
+
+.restaurant-form-hours-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+  flex-grow: 1;
+}
+
+.restaurant-form-time-group {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+}
+
+.restaurant-form-time-label {
+  font-family: var(--font-family);
+  font-size: var(--font-xs);
+  color: var(--text-secondary);
+  font-weight: var(--weight-bold);
+  width: 60px;
+  text-align: right;
+}
+
+.restaurant-form-time-input {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: var(--spacing-2) var(--spacing-3);
+  font-family: var(--font-family);
+  font-size: var(--font-sm);
+  color: var(--text-primary);
+  width: 100px;
+  text-align: center;
+  outline: none;
+}
+
+.restaurant-form-manager-toolbar {
+  display: flex;
+  gap: var(--spacing-4);
+  margin-bottom: var(--spacing-4);
+}
+
+.restaurant-form-manager-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.restaurant-form-manager-item {
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-3) var(--spacing-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+}
+
+.restaurant-form-manager-item--selected {
+  border-color: var(--error-text);
+  background-color: #fef2f2; /* light red tint */
+}
+
+.restaurant-form-manager-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-family);
+  font-size: var(--font-md);
+  font-weight: var(--weight-bold);
+  margin-right: var(--spacing-4);
+}
+
+.restaurant-form-manager-info {
+  flex-grow: 1;
+}
+
+.restaurant-form-manager-name {
+  font-family: var(--font-family);
+  font-size: var(--font-sm);
+  font-weight: var(--weight-bold);
+  color: var(--text-primary);
+}
+
+.restaurant-form-manager-email {
+  font-family: var(--font-family);
+  font-size: var(--font-xs);
+  color: var(--text-secondary);
+}
+
+.restaurant-form-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-4);
+  margin-top: var(--spacing-8);
+  padding-bottom: var(--spacing-10);
+}
+
+@media (max-width: 768px) {
+  .restaurant-form-grid-info {
+    grid-template-columns: 1fr;
+  }
+  .restaurant-form-row {
+    flex-direction: column;
+  }
+  .restaurant-form-hours-row {
+    flex-direction: column;
+    gap: var(--spacing-3);
+  }
+  .restaurant-form-time-label {
+    text-align: left;
+  }
+}

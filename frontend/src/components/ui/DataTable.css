@@ -1,0 +1,116 @@
+.ui-datatable-wrapper {
+  background-color: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  font-family: var(--font-family);
+}
+
+.ui-datatable-toolbar {
+  padding: var(--spacing-4);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.ui-datatable-search {
+  padding: var(--spacing-2) var(--spacing-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: var(--font-sm);
+  outline: none;
+  transition: border-color var(--transition-fast);
+}
+
+.ui-datatable-search:focus {
+  border-color: var(--border-focus);
+}
+
+.ui-datatable-container {
+  overflow-x: auto;
+}
+
+.ui-datatable {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.ui-datatable-th {
+  padding: var(--spacing-3) var(--spacing-4);
+  background-color: var(--background);
+  color: var(--text-secondary);
+  font-size: var(--font-xs);
+  font-weight: var(--weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--border);
+}
+
+.ui-datatable-td {
+  padding: var(--spacing-4);
+  font-size: var(--font-sm);
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border);
+}
+
+.ui-datatable-row:last-child .ui-datatable-td {
+  border-bottom: none;
+}
+
+.ui-datatable-row:hover {
+  background-color: rgba(0, 0, 0, 0.01);
+}
+
+.ui-datatable-row--selected {
+  background-color: rgba(192, 57, 43, 0.03);
+}
+
+.ui-datatable-checkbox-col {
+  width: 48px;
+  text-align: center;
+}
+
+.ui-datatable-empty,
+.ui-datatable-loading {
+  text-align: center;
+  padding: var(--spacing-8);
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.ui-datatable-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: var(--spacing-3) var(--spacing-4);
+  border-top: 1px solid var(--border);
+  background-color: var(--background);
+}
+
+.ui-datatable-page-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: var(--spacing-1) var(--spacing-3);
+  font-size: var(--font-sm);
+  cursor: pointer;
+  background-color: var(--surface);
+  transition: all var(--transition-fast);
+}
+
+.ui-datatable-page-btn:hover:not(:disabled) {
+  background-color: var(--border);
+}
+
+.ui-datatable-page-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ui-datatable-page-info {
+  margin: 0 var(--spacing-4);
+  font-size: var(--font-sm);
+  color: var(--text-secondary);
+}

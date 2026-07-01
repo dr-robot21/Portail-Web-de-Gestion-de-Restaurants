@@ -1,0 +1,79 @@
+.ui-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-family);
+  font-weight: var(--weight-medium);
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  text-align: center;
+  outline: none;
+}
+
+.ui-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Variants */
+.ui-button--primary {
+  background-color: var(--primary);
+  color: var(--text-inverse);
+}
+
+.ui-button--primary:hover:not(:disabled) {
+  background-color: var(--primary-hover);
+}
+
+.ui-button--secondary {
+  background-color: transparent;
+  color: var(--text-link);
+  border-color: transparent;
+}
+
+.ui-button--secondary:hover:not(:disabled) {
+  color: var(--text-link-hover);
+  text-decoration: underline;
+}
+
+.ui-button--success {
+  background-color: var(--success-main);
+  color: var(--text-inverse);
+}
+
+.ui-button--success:hover:not(:disabled) {
+  background-color: var(--success-main-hover);
+}
+
+.ui-button--outline {
+  background-color: transparent;
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+.ui-button--outline:hover:not(:disabled) {
+  background-color: rgba(192, 57, 43, 0.05);
+}
+
+/* Sizes */
+.ui-button--sm {
+  padding: var(--spacing-2) var(--spacing-3);
+  font-size: var(--font-sm);
+}
+
+.ui-button--md {
+  padding: var(--spacing-3) var(--spacing-4);
+  font-size: var(--font-md);
+}
+
+.ui-button--lg {
+  padding: var(--spacing-4) var(--spacing-6);
+  font-size: var(--font-lg);
+}
+
+/* Full Width */
+.ui-button--full-width {
+  width: 100%;
+}

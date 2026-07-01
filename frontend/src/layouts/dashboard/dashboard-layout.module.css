@@ -2,18 +2,20 @@
     width: 100%;
     height: 100vh;
     display: flex;
+    overflow: hidden;
     background-color: var(--bg-color);
 }
 
-aside {
-    height: 100%;
-}
-
-
 .main {
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
-header {
-    width: 100%;
+.content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.5rem;
+    scroll-behavior: smooth;
 }

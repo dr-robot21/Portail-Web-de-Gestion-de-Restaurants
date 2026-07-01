@@ -1,0 +1,113 @@
+.auth-layout {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--background);
+  padding: var(--spacing-4);
+}
+
+.auth-layout-container {
+  width: 100%;
+  max-width: 440px;
+}
+
+.auth-card {
+  padding: var(--spacing-8);
+  box-shadow: var(--shadow-lg);
+  border: none;
+}
+
+/* Common auth page styles */
+.auth-icon-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--spacing-6);
+}
+
+.auth-icon-circle {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-icon-circle--error {
+  background-color: var(--error-bg);
+  color: var(--error-text);
+}
+
+.auth-icon-circle--success {
+  background-color: var(--success-bg);
+  color: var(--success-text);
+}
+
+.auth-icon-circle svg {
+  width: 32px;
+  height: 32px;
+}
+
+.auth-title {
+  font-family: var(--font-family);
+  font-size: var(--font-2xl);
+  font-weight: var(--weight-bold);
+  color: var(--text-primary);
+  text-align: center;
+  margin-bottom: var(--spacing-4);
+}
+
+.auth-message {
+  font-family: var(--font-family);
+  font-size: var(--font-sm);
+  color: var(--text-secondary);
+  text-align: center;
+  margin-bottom: var(--spacing-6);
+  line-height: 1.5;
+}
+
+.auth-form-group {
+  margin-bottom: var(--spacing-4);
+}
+
+.auth-form-footer {
+  margin-top: var(--spacing-6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-4);
+}
+
+.auth-link {
+  font-family: var(--font-family);
+  font-size: var(--font-sm);
+  color: var(--text-secondary);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  transition: color var(--transition-fast);
+}
+
+.auth-link:hover {
+  color: var(--text-primary);
+}
+
+.auth-link-primary {
+  color: var(--primary);
+  font-weight: var(--weight-medium);
+}
+
+.auth-link-primary:hover {
+  color: var(--primary-hover);
+  text-decoration: underline;
+}
+
+.auth-footer-text {
+  font-family: var(--font-family);
+  font-size: var(--font-sm);
+  color: var(--text-secondary);
+  text-align: center;
+  margin-top: var(--spacing-8);
+}

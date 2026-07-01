@@ -1,0 +1,140 @@
+.settings-page {
+  padding: var(--spacing-6) var(--spacing-8);
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.settings-header {
+  margin-bottom: var(--spacing-8);
+}
+
+.settings-title {
+  font-family: var(--font-family);
+  font-size: var(--font-2xl);
+  font-weight: var(--weight-bold);
+  color: var(--text-primary);
+  margin: 0 0 var(--spacing-1) 0;
+}
+
+.settings-subtitle {
+  font-family: var(--font-family);
+  font-size: var(--font-sm);
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.settings-card {
+  margin-bottom: var(--spacing-6);
+}
+
+.settings-card-title {
+  display: flex;
+  align-items: center;
+  font-family: var(--font-family);
+  font-size: var(--font-lg);
+  font-weight: var(--weight-bold);
+  color: var(--text-primary);
+  margin: 0 0 var(--spacing-6) 0;
+}
+
+.settings-profile-section {
+  display: flex;
+  align-items: center;
+  margin-bottom: var(--spacing-8);
+  padding-bottom: var(--spacing-6);
+  border-bottom: 1px solid var(--border);
+}
+
+.settings-profile-avatar-wrapper {
+  position: relative;
+  width: 96px;
+  height: 96px;
+  margin-right: var(--spacing-6);
+}
+
+.settings-profile-avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.settings-profile-edit-badge {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background-color: var(--primary);
+  color: white;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--surface);
+  cursor: pointer;
+}
+
+.settings-profile-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.settings-profile-title {
+  font-family: var(--font-family);
+  font-size: var(--font-md);
+  font-weight: var(--weight-bold);
+  color: var(--text-primary);
+  margin: 0 0 var(--spacing-1) 0;
+}
+
+.settings-profile-desc {
+  font-family: var(--font-family);
+  font-size: var(--font-xs);
+  color: var(--text-secondary);
+  margin: 0 0 var(--spacing-3) 0;
+}
+
+.settings-profile-actions {
+  display: flex;
+  gap: var(--spacing-3);
+}
+
+.settings-form-row {
+  display: flex;
+  gap: var(--spacing-4);
+  margin-bottom: var(--spacing-4);
+}
+
+.settings-form-col {
+  flex: 1;
+}
+
+.settings-form-group {
+  margin-bottom: var(--spacing-4);
+}
+
+.settings-form-group:last-child {
+  margin-bottom: 0;
+}
+
+.settings-security-alert {
+  margin-bottom: var(--spacing-6);
+}
+
+.settings-footer-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-4);
+  margin-top: var(--spacing-8);
+  padding-bottom: var(--spacing-10);
+}
+
+@media (max-width: 768px) {
+  .settings-form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+}

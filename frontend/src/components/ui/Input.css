@@ -1,0 +1,116 @@
+.ui-input-container {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: var(--spacing-4);
+}
+
+.ui-input-container--full-width {
+  width: 100%;
+}
+
+.ui-input-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-2);
+}
+
+.ui-input-label {
+  font-family: var(--font-family);
+  font-size: var(--font-sm);
+  font-weight: var(--weight-medium);
+  color: var(--text-primary);
+}
+
+.ui-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background-color: var(--surface);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.ui-input-wrapper:focus-within {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.1);
+}
+
+.ui-input-wrapper--error {
+  border-color: var(--border-error);
+}
+
+.ui-input-wrapper--error:focus-within {
+  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+}
+
+.ui-input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  padding: var(--spacing-3) var(--spacing-4);
+  font-family: var(--font-family);
+  font-size: var(--font-md);
+  color: var(--text-primary);
+  outline: none;
+}
+
+.ui-input::placeholder {
+  color: var(--text-secondary);
+}
+
+.ui-input-wrapper--has-icon .ui-input {
+  padding-left: var(--spacing-10);
+}
+
+.ui-input-wrapper--has-action .ui-input {
+  padding-right: var(--spacing-10);
+}
+
+.ui-input-icon {
+  position: absolute;
+  left: var(--spacing-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  pointer-events: none;
+}
+
+.ui-input-action {
+  position: absolute;
+  right: var(--spacing-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0;
+}
+
+.ui-input-action:hover {
+  color: var(--text-primary);
+}
+
+.ui-input-error-text {
+  font-family: var(--font-family);
+  font-size: var(--font-xs);
+  color: var(--text-error);
+  margin-top: var(--spacing-1);
+}
+
+.ui-input-error-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  background-color: var(--error-text);
+  color: white;
+  border-radius: 50%;
+  font-size: 10px;
+  font-weight: bold;
+}

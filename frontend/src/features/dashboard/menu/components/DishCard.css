@@ -1,0 +1,119 @@
+.dish-card {
+  background-color: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow var(--transition-fast);
+}
+
+.dish-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.dish-card-image-container {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%; /* 16:9 aspect ratio */
+  background-color: var(--background);
+}
+
+.dish-card-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.dish-card-status {
+  position: absolute;
+  top: var(--spacing-3);
+  right: var(--spacing-3);
+}
+
+.dish-card-content {
+  padding: var(--spacing-4);
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.dish-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--spacing-2);
+}
+
+.dish-card-title {
+  font-family: var(--font-family);
+  font-size: var(--font-lg);
+  font-weight: var(--weight-bold);
+  color: var(--text-primary);
+  margin: 0;
+  flex: 1;
+  padding-right: var(--spacing-2);
+}
+
+.dish-card-price {
+  font-family: var(--font-family);
+  font-size: var(--font-lg);
+  font-weight: var(--weight-bold);
+  color: var(--primary);
+  white-space: nowrap;
+}
+
+.dish-card-description {
+  font-family: var(--font-family);
+  font-size: var(--font-sm);
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: var(--spacing-6);
+  flex-grow: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dish-card-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--border);
+  padding-top: var(--spacing-3);
+  margin-top: auto;
+}
+
+.dish-card-actions-left {
+  display: flex;
+  gap: var(--spacing-2);
+}
+
+.dish-card-action-btn {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: var(--spacing-1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+}
+
+.dish-card-action-btn:hover {
+  color: var(--text-primary);
+  background-color: var(--background);
+}
+
+.dish-card-action-btn--delete:hover {
+  color: var(--error-text);
+  background-color: var(--error-bg);
+}
