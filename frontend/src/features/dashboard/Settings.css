@@ -1,7 +1,5 @@
 .settings-page {
   padding: var(--spacing-6) var(--spacing-8);
-  max-width: 1000px;
-  margin: 0 auto;
 }
 
 .settings-header {

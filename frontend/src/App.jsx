@@ -29,7 +29,7 @@ import EditDish from "./features/dashboard/menu/EditDish";
 import CategoriesManagement from "./features/dashboard/menu/CategoriesManagement";
 import Notifications from "./features/dashboard/Notifications";
 import Settings from "./features/dashboard/Settings";
-const RestaurantDashboard = () => <div>Restaurant Dashboard</div>;
+import RestaurantAdminDashboard from "./features/dashboard/restaurant admin/RestaurantAdminDashboard";
 const OrdersManagement = () => <div>Orders Management</div>;
 
 function App() {
@@ -72,7 +72,7 @@ function App() {
       {/* Protected Routes - Restaurant Admin */}
       <Route element={<AuthGuard allowedRoles={['Restaurant Admin', 'Super Admin']} />}>
         <Route element={<DashboardLayout />}>
-          <Route path="/restaurant-dashboard" element={<RestaurantDashboard />} />
+          <Route path="/restaurant-dashboard" element={<RestaurantAdminDashboard />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/menu" element={<MenuManagement />} />

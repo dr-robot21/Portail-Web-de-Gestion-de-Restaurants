@@ -1,7 +1,5 @@
 .restaurant-dashboard-page {
   padding: var(--spacing-6) var(--spacing-8);
-  max-width: 1400px;
-  margin: 0 auto;
 }
 
 .restaurant-dashboard-header {
@@ -88,9 +86,9 @@
   color: var(--text-secondary);
 }
 
-.restaurant-dashboard-main-grid {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
+.restaurant-dashboard-content {
+  display: flex;
+  flex-direction: column;
   gap: var(--spacing-6);
 }
 
@@ -103,7 +101,7 @@
 }
 
 .quick-management-section {
-  margin-bottom: var(--spacing-8);
+  margin-bottom: var(--spacing-2);
 }
 
 .quick-management-grid {
@@ -226,74 +224,6 @@
 .perf-badge--warning {
   background-color: #ffedd5;
   color: #ea580c;
-}
-
-.floor-management-card {
-  padding: var(--spacing-6);
-}
-
-.floor-staff-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-3);
-}
-
-.floor-staff-item {
-  display: flex;
-  align-items: center;
-  padding: var(--spacing-3) var(--spacing-4);
-  background-color: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: var(--radius-md);
-}
-
-.floor-staff-avatar {
-  width: 36px;
-  height: 36px;
-  background-color: #fee2e2;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: var(--spacing-4);
-}
-
-.floor-staff-info {
-  flex-grow: 1;
-}
-
-.floor-staff-name {
-  font-family: var(--font-family);
-  font-size: var(--font-sm);
-  font-weight: var(--weight-bold);
-  color: var(--text-primary);
-  margin-bottom: 2px;
-}
-
-.floor-staff-role {
-  font-family: var(--font-family);
-  font-size: var(--font-xs);
-  color: var(--text-secondary);
-}
-
-.floor-staff-status-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-}
-
-.floor-staff-status-dot--online {
-  background-color: #22c55e;
-}
-
-.floor-staff-status-dot--away {
-  background-color: #f59e0b;
-}
-
-@media (max-width: 1024px) {
-  .restaurant-dashboard-main-grid {
-    grid-template-columns: 1fr;
-  }
 }
 
 @media (max-width: 768px) {

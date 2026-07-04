@@ -1,8 +1,6 @@
 import PrimaryButton from "../../components/common/PrimaryButton/PrimaryButton";
 import styles from "./sidebar.module.css";
-import { HiPlus } from "react-icons/hi";
 import { IoMdHelpCircleOutline } from "react-icons/io";
-import { MdOutlineAdd } from "react-icons/md";
 import { FiLogOut } from "react-icons/fi";
 import { MENU_LIST } from "./menuConfig";
 import { NavLink } from "react-router-dom";
@@ -48,10 +46,11 @@ function Sidebar() {
 
         <div className={styles.sidebarMenu}>
           <nav className={styles.listContainer}>
-            {navList.map((link , index) => (
+            {navList.map((link, index) => (
               <NavLink
                 to={link.path}
                 key={index}
+                end={link.path === "/dashboard" || link.path === "/restaurant-dashboard"}
                 className={({ isActive }) =>
                   `${styles.navLink} ${isActive ? styles.active : ""}`
                 }
@@ -64,7 +63,7 @@ function Sidebar() {
         </div>
 
         <div className={styles.sidebarFooter}>
-          <NavLink className={styles.navLink}>
+          <NavLink to="/help" className={styles.navLink}>
             <IoMdHelpCircleOutline />
             <span className={styles.label}>Help Center</span>
           </NavLink>

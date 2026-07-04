@@ -1,3 +1,4 @@
+/* ─── DataTable Wrapper ───────────────────────────────────────── */
 .ui-datatable-wrapper {
   background-color: var(--surface);
   border-radius: var(--radius-lg);
@@ -80,37 +81,94 @@
   font-style: italic;
 }
 
-.ui-datatable-pagination {
+/* ─── Pagination ──────────────────────────────────────────────── */
+
+.ui-dt-pagination {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  padding: var(--spacing-3) var(--spacing-4);
+  justify-content: space-between;
+  padding: var(--spacing-4) var(--spacing-5);
   border-top: 1px solid var(--border);
+  background-color: var(--surface);
+  flex-wrap: wrap;
+  gap: var(--spacing-3);
+}
+
+.ui-dt-pag-info {
+  font-family: var(--font-family);
+  font-size: var(--font-sm);
+  color: var(--text-secondary);
+}
+
+.ui-dt-pag-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+}
+
+.ui-dt-pag-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 34px;
+  padding: 0 var(--spacing-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background-color: var(--surface);
+  font-family: var(--font-family);
+  font-size: var(--font-sm);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+  user-select: none;
+}
+
+.ui-dt-pag-btn:hover:not(:disabled) {
+  background-color: var(--background);
+  border-color: #cbd5e1;
+}
+
+.ui-dt-pag-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
   background-color: var(--background);
 }
 
-.ui-datatable-page-btn {
-  background: none;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: var(--spacing-1) var(--spacing-3);
-  font-size: var(--font-sm);
-  cursor: pointer;
-  background-color: var(--surface);
-  transition: all var(--transition-fast);
+/* Nav buttons — Précédent / Suivant */
+.ui-dt-pag-nav {
+  font-weight: var(--weight-medium);
+  padding: 0 var(--spacing-4);
 }
 
-.ui-datatable-page-btn:hover:not(:disabled) {
-  background-color: var(--border);
+/* Numbered page buttons */
+.ui-dt-pag-page {
+  min-width: 34px;
+  padding: 0 var(--spacing-2);
+  font-weight: var(--weight-medium);
 }
 
-.ui-datatable-page-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+.ui-dt-pag-page--active {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: #ffffff;
+  font-weight: var(--weight-bold);
 }
 
-.ui-datatable-page-info {
-  margin: 0 var(--spacing-4);
+.ui-dt-pag-page--active:hover:not(:disabled) {
+  background-color: var(--primary-hover);
+  border-color: var(--primary-hover);
+}
+
+/* Ellipsis */
+.ui-dt-pag-dots {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 34px;
+  min-width: 24px;
+  font-family: var(--font-family);
   font-size: var(--font-sm);
   color: var(--text-secondary);
+  user-select: none;
 }

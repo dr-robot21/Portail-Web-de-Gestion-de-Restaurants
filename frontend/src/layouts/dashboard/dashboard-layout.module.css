@@ -18,4 +18,13 @@
     overflow-y: auto;
     padding: 1.5rem;
     scroll-behavior: smooth;
+    width: 100%;
+}
+
+@media (min-width: 1440px) {
+    .content > * {
+        max-width: 1400px;
+        margin-left: auto;
+        margin-right: auto;
+    }
 }

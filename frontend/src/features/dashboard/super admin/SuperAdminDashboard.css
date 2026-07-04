@@ -1,0 +1,356 @@
+/* ─── Super Admin Dashboard ────────────────────────────────── */
+
+.sad-page {
+  padding: var(--spacing-6) var(--spacing-8);
+  width: 100%;
+}
+
+/* ── Page Header ─────────────────────────────────────────────── */
+.sad-header {
+  margin-bottom: var(--spacing-8);
+}
+
+.sad-title {
+  font-family: var(--font-family);
+  font-size: var(--font-2xl);
+  font-weight: var(--weight-bold);
+  color: var(--text-primary);
+  margin: 0 0 var(--spacing-1) 0;
+}
+
+.sad-subtitle {
+  font-family: var(--font-family);
+  font-size: var(--font-sm);
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* ── Top Metric Cards ─────────────────────────────────────────── */
+.sad-metrics-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-6);
+  margin-bottom: var(--spacing-8);
+}
+
+.sad-metric-card {
+  padding: var(--spacing-5) var(--spacing-6) !important;
+  display: flex;
+  flex-direction: column;
+}
+
+.sad-metric-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-2);
+}
+
+.sad-metric-label {
+  font-family: var(--font-family);
+  font-size: var(--font-xs);
+  font-weight: var(--weight-bold);
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.sad-metric-icon-red {
+  color: var(--error-text);
+  display: flex;
+  align-items: center;
+}
+
+.sad-metric-value-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--spacing-2);
+  margin-bottom: var(--spacing-1);
+}
+
+.sad-metric-value {
+  font-family: var(--font-family);
+  font-size: 40px;
+  font-weight: var(--weight-bold);
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.sad-metric-badge-green {
+  font-family: var(--font-family);
+  font-size: var(--font-xs);
+  font-weight: var(--weight-medium);
+  color: #16a34a;
+}
+
+.sad-metric-subtext {
+  font-family: var(--font-family);
+  font-size: var(--font-xs);
+  font-weight: var(--weight-medium);
+  color: var(--text-secondary);
+}
+
+.sad-metric-desc {
+  font-family: var(--font-family);
+  font-size: var(--font-sm);
+  color: var(--text-secondary);
+}
+
+/* ── Main Grid ────────────────────────────────────────────────── */
+.sad-main-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--spacing-6);
+  align-items: start;
+}
+
+.sad-left-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-6);
+}
+
+/* ── Section ──────────────────────────────────────────────────── */
+.sad-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.sad-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sad-section-title {
+  font-family: var(--font-family);
+  font-size: var(--font-lg);
+  font-weight: var(--weight-bold);
+  color: var(--text-primary);
+  margin: 0 0 var(--spacing-4) 0;
+}
+
+.sad-view-all {
+  font-family: var(--font-family);
+  font-size: var(--font-sm);
+  font-weight: var(--weight-bold);
+  color: var(--error-text);
+  text-decoration: none;
+}
+
+.sad-view-all:hover {
+  text-decoration: underline;
+}
+
+/* ── Quick Management Card ────────────────────────────────────── */
+.sad-quick-card {
+  padding: var(--spacing-5) var(--spacing-6) !important;
+}
+
+.sad-quick-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-4);
+}
+
+.sad-quick-btn {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-4) var(--spacing-2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-3);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  color: var(--text-primary);
+  font-family: var(--font-family);
+  font-size: var(--font-sm);
+  font-weight: var(--weight-medium);
+}
+
+.sad-quick-btn:hover {
+  background-color: var(--background);
+  border-color: #cbd5e1;
+}
+
+.sad-quick-icon {
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sad-quick-btn--primary {
+  background-color: var(--error-text);
+  border-color: var(--error-text);
+  color: white;
+}
+
+.sad-quick-btn--primary:hover {
+  background-color: #b91c1c;
+  border-color: #b91c1c;
+}
+
+.sad-quick-btn--primary .sad-quick-icon {
+  color: white;
+}
+
+/* ── Performance Table ────────────────────────────────────────── */
+.sad-table-card {
+  padding: 0 !important;
+  overflow: hidden;
+}
+
+.sad-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.sad-table th {
+  font-family: var(--font-family);
+  font-size: 10px;
+  font-weight: var(--weight-bold);
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background-color: #f8fafc;
+  padding: var(--spacing-3) var(--spacing-6);
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.sad-table td {
+  font-family: var(--font-family);
+  font-size: var(--font-sm);
+  color: var(--text-secondary);
+  padding: var(--spacing-4) var(--spacing-6);
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+.sad-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.sad-td-name {
+  font-weight: var(--weight-bold) !important;
+  color: var(--text-primary) !important;
+}
+
+.sad-td-price {
+  font-weight: var(--weight-bold) !important;
+  color: var(--error-text) !important;
+}
+
+.sad-badge {
+  font-size: 10px;
+  border-radius: 50px;
+  padding: 4px 8px;
+}
+
+.sad-badge--success {
+  background-color: #dcfce7;
+  color: #16a34a;
+}
+
+.sad-badge--warning {
+  background-color: #ffedd5;
+  color: #ea580c;
+}
+
+/* ── Right Column — Floor Management ─────────────────────────── */
+.sad-right-col {
+  position: sticky;
+  top: 0;
+}
+
+.sad-floor-card {
+  padding: var(--spacing-6) !important;
+}
+
+.sad-staff-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+.sad-staff-item {
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-3) var(--spacing-4);
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--radius-md);
+}
+
+.sad-staff-avatar {
+  width: 36px;
+  height: 36px;
+  background-color: #fee2e2;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: var(--spacing-4);
+  flex-shrink: 0;
+}
+
+.sad-staff-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.sad-staff-name {
+  font-family: var(--font-family);
+  font-size: var(--font-sm);
+  font-weight: var(--weight-bold);
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.sad-staff-role {
+  font-family: var(--font-family);
+  font-size: var(--font-xs);
+  color: var(--text-secondary);
+}
+
+.sad-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.sad-status-dot--online {
+  background-color: #22c55e;
+}
+
+.sad-status-dot--away {
+  background-color: #f59e0b;
+}
+
+/* ── Responsive ───────────────────────────────────────────────── */
+@media (max-width: 1200px) {
+  .sad-main-grid {
+    grid-template-columns: 1fr;
+  }
+  .sad-right-col {
+    position: static;
+  }
+}
+
+@media (max-width: 768px) {
+  .sad-page {
+    padding: var(--spacing-4);
+  }
+  .sad-metrics-row {
+    grid-template-columns: 1fr;
+  }
+  .sad-quick-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

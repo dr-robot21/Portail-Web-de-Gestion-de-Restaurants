@@ -1,7 +1,5 @@
 .restaurant-menu-page {
   padding: var(--spacing-6) var(--spacing-8);
-  max-width: 1200px;
-  margin: 0 auto;
 }
 
 .restaurant-menu-header {

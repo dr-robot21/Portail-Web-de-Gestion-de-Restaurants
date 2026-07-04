@@ -1,7 +1,6 @@
 import React from 'react';
 import Card from '../../../components/ui/Card';
 import Badge from '../../../components/ui/Badge';
-import Button from '../../../components/ui/Button';
 import './RestaurantAdminDashboard.css';
 
 const MOCK_MENU_PERFORMANCE = [
@@ -10,11 +9,7 @@ const MOCK_MENU_PERFORMANCE = [
   { id: 3, name: 'Escargot de Bourgogne', category: 'Appetizer', price: '€18.00', sales: 9, status: 'IN STOCK', statusVariant: 'success' },
 ];
 
-const MOCK_STAFF = [
-  { id: 1, name: 'Jean Dupont', role: 'Head Chef', status: 'online' },
-  { id: 2, name: 'Marie Laurent', role: 'Floor Manager', status: 'online' },
-  { id: 3, name: 'Luc Bernard', role: 'Sommelier', status: 'away' },
-];
+
 
 const RestaurantAdminDashboard = () => {
   const CutleryIcon = (
@@ -123,9 +118,8 @@ const RestaurantAdminDashboard = () => {
         </Card>
       </div>
 
-      <div className="restaurant-dashboard-main-grid">
-        <div className="restaurant-dashboard-left-col">
-          
+      <div className="restaurant-dashboard-content">
+
           <div className="quick-management-section">
             <h2 className="section-title">Quick Management</h2>
             <div className="quick-management-grid">
@@ -183,30 +177,6 @@ const RestaurantAdminDashboard = () => {
             </Card>
           </div>
 
-        </div>
-
-        <div className="restaurant-dashboard-right-col">
-          <Card className="floor-management-card">
-            <h2 className="section-title">Floor Management</h2>
-            <div className="floor-staff-list">
-              {MOCK_STAFF.map(staff => (
-                <div key={staff.id} className="floor-staff-item">
-                  <div className="floor-staff-avatar">
-                    {UserIcon}
-                  </div>
-                  <div className="floor-staff-info">
-                    <div className="floor-staff-name">{staff.name}</div>
-                    <div className="floor-staff-role">{staff.role}</div>
-                  </div>
-                  <div className={`floor-staff-status-dot floor-staff-status-dot--${staff.status}`}></div>
-                </div>
-              ))}
-            </div>
-            <Button variant="outline" fullWidth style={{ marginTop: 'var(--spacing-6)', color: 'var(--text-primary)' }}>
-              Manage All Staff
-            </Button>
-          </Card>
-        </div>
       </div>
     </div>
   );

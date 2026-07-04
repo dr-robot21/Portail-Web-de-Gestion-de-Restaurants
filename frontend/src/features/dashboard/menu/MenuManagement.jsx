@@ -61,13 +61,23 @@ const MenuManagement = () => {
   const [activeTab, setActiveTab] = useState('principaux');
   const [search, setSearch] = useState('');
   
-  // Simulate an alert state from the mockup
-  const [alert, setAlert] = useState(null); 
-  const [deleteModalOpen, setDeleteModalOpen] = useState(true); // Default true to demonstrate mockup image_2.png
-  const [viewModalOpen, setViewModalOpen] = useState(true); // Default true to demonstrate mockup image_3.png
+  const [alert, setAlert] = useState(null);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [viewModalOpen, setViewModalOpen] = useState(false);
+
+  // Pagination
+  const PAGE_SIZE = 6;
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const filteredDishes = MOCK_DISHES.filter(d => d.categoryId === activeTab && (
+    search === '' || d.name.toLowerCase().includes(search.toLowerCase())
+  ));
+  const totalItems = filteredDishes.length;
+  const totalPages = Math.max(1, Math.ceil(totalItems / PAGE_SIZE));
+  const pagedDishes = filteredDishes.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
   const handleEdit = (dish) => {
-    navigate('/menu/edit/1'); // Mocking ID
+    navigate('/menu/edit/1');
   };
 
   const handleDelete = (dish) => {
@@ -76,6 +86,11 @@ const MenuManagement = () => {
 
   const handleView = (dish) => {
     setViewModalOpen(true);
+  };
+
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    setCurrentPage(1);
   };
 
   const handleAddClick = () => {
@@ -120,12 +135,12 @@ const MenuManagement = () => {
         <Tabs 
           tabs={CATEGORIES} 
           activeTab={activeTab} 
-          onChange={setActiveTab} 
+          onChange={handleTabChange} 
         />
       </div>
 
       <div className="menu-grid">
-        {MOCK_DISHES.filter(d => d.categoryId === activeTab).map(dish => (
+        {pagedDishes.map(dish => (
           <DishCard 
             key={dish.id} 
             dish={dish} 
@@ -136,15 +151,35 @@ const MenuManagement = () => {
         ))}
       </div>
 
-      {/* Pagination Mockup */}
-      <div className="menu-pagination">
-        <button className="menu-pagination-btn" disabled>Précédent</button>
-        <button className="menu-pagination-page menu-pagination-page--active">1</button>
-        <button className="menu-pagination-page">2</button>
-        <button className="menu-pagination-page">3</button>
-        <span className="menu-pagination-dots">...</span>
-        <button className="menu-pagination-btn">Suivant</button>
-      </div>
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="menu-pagination-wrapper">
+          <span className="menu-pag-info">
+            Affichage de {totalItems === 0 ? 0 : (currentPage - 1) * PAGE_SIZE + 1} à {Math.min(currentPage * PAGE_SIZE, totalItems)} sur {totalItems} entrées
+          </span>
+          <div className="menu-pag-controls">
+            <button
+              className="menu-pag-btn menu-pag-nav"
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+            >Précédent</button>
+
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+              <button
+                key={page}
+                className={`menu-pag-btn menu-pag-page ${currentPage === page ? 'menu-pag-page--active' : ''}`}
+                onClick={() => setCurrentPage(page)}
+              >{page}</button>
+            ))}
+
+            <button
+              className="menu-pag-btn menu-pag-nav"
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+            >Suivant</button>
+          </div>
+        </div>
+      )}
 
       {/* Delete Confirmation Modal */}
       <Modal isOpen={deleteModalOpen} onClose={() => setDeleteModalOpen(false)} hideCloseButton={true} className="menu-delete-modal">
