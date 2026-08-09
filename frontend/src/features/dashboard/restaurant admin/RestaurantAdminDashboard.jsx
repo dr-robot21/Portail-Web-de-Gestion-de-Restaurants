@@ -1,17 +1,30 @@
-import React from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import api from '../../../services/api';
 import Card from '../../../components/ui/Card';
 import Badge from '../../../components/ui/Badge';
 import './RestaurantAdminDashboard.css';
 
-const MOCK_MENU_PERFORMANCE = [
-  { id: 1, name: 'Duck Confit Parmentier', category: 'Main Course', price: '€28.00', sales: 14, status: 'IN STOCK', statusVariant: 'success' },
-  { id: 2, name: 'Truffle Risotto', category: 'Main Course', price: '€32.00', sales: 22, status: 'LOW STOCK', statusVariant: 'warning' },
-  { id: 3, name: 'Escargot de Bourgogne', category: 'Appetizer', price: '€18.00', sales: 9, status: 'IN STOCK', statusVariant: 'success' },
-];
-
-
-
 const RestaurantAdminDashboard = () => {
+  const navigate = useNavigate();
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchDashboard = async () => {
+      try {
+        const response = await api.get('/dashboard/restaurant');
+        setData(response.data);
+      } catch (err) {
+        setError(err.response?.data?.message || 'Failed to fetch dashboard data.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchDashboard();
+  }, []);
+
   const CutleryIcon = (
     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"></path>
@@ -54,56 +67,46 @@ const RestaurantAdminDashboard = () => {
     </svg>
   );
 
-  const ClockIcon = (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="10"></circle>
-      <polyline points="12 6 12 12 16 14"></polyline>
-    </svg>
-  );
-
   const ChartIcon = (
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
     </svg>
   );
 
-  const UserIcon = (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-      <circle cx="12" cy="7" r="4"></circle>
-    </svg>
-  );
+  if (loading) return <div style={{ padding: 'var(--spacing-6)' }}>Chargement du tableau de bord...</div>;
+  if (error) return <div style={{ padding: 'var(--spacing-6)', color: 'var(--error-text)' }}>{error}</div>;
+  if (!data) return null;
 
   return (
     <div className="restaurant-dashboard-page">
       <div className="restaurant-dashboard-header">
         <h1 className="restaurant-dashboard-title">Vue d'ensemble</h1>
-        <p className="restaurant-dashboard-subtitle">Aperçu des performances d'aujourd'hui</p>
+        <p className="restaurant-dashboard-subtitle">Aperçu des performances de {data.restaurant?.name}</p>
       </div>
 
       <div className="restaurant-dashboard-top-metrics">
         <Card className="metric-card">
           <div className="metric-header">
-            <span className="metric-label">MENU STATUS</span>
+            <span className="metric-label">STATUS DU MENU</span>
             <span style={{ color: 'var(--error-text)' }}>{CutleryIcon}</span>
           </div>
           <div className="metric-value-row">
-            <span className="metric-value">42</span>
-            <span className="metric-subtext metric-subtext--success">+3 new</span>
+            <span className="metric-value">{data.stats?.total_dishes || 0}</span>
+            <span className="metric-subtext metric-subtext--success">{data.stats?.active_dishes || 0} actifs</span>
           </div>
-          <div className="metric-desc">Total Dishes in Menu</div>
+          <div className="metric-desc">Plats totaux dans le menu</div>
         </Card>
 
         <Card className="metric-card">
           <div className="metric-header">
-            <span className="metric-label">PERSONNEL</span>
+            <span className="metric-label">CATÉGORIES</span>
             <span style={{ color: 'var(--error-text)' }}>{BadgeIcon}</span>
           </div>
           <div className="metric-value-row">
-            <span className="metric-value">18</span>
-            <span className="metric-subtext">Active Now</span>
+            <span className="metric-value">{data.stats?.total_categories || 0}</span>
+            <span className="metric-subtext">Sections</span>
           </div>
-          <div className="metric-desc">Staff Members On Duty</div>
+          <div className="metric-desc">Catégories du menu</div>
         </Card>
 
         <Card className="metric-card metric-card--status">
@@ -112,68 +115,80 @@ const RestaurantAdminDashboard = () => {
             <span>{CheckCircleIcon}</span>
           </div>
           <div className="metric-value-row">
-            <span className="metric-value">OUVERT</span>
+            <span className="metric-value">{data.restaurant?.is_active ? 'ACTIF' : 'INACTIF'}</span>
           </div>
-          <div className="metric-desc">Service du soir en cours</div>
+          <div className="metric-desc">Statut du restaurant</div>
         </Card>
       </div>
 
       <div className="restaurant-dashboard-content">
 
           <div className="quick-management-section">
-            <h2 className="section-title">Quick Management</h2>
+            <h2 className="section-title">Actions Rapides</h2>
             <div className="quick-management-grid">
-              <button className="quick-btn quick-btn--primary">
+              <button className="quick-btn quick-btn--primary" onClick={() => navigate('/menu/add')}>
                 <div className="quick-btn-icon">{PlusIcon}</div>
-                <span>Add New Dish</span>
+                <span>Ajouter un Plat</span>
               </button>
-              <button className="quick-btn">
+              <button className="quick-btn" onClick={() => navigate('/menu')}>
                 <div className="quick-btn-icon">{EditMenuIcon}</div>
-                <span>Edit Menu</span>
+                <span>Gérer le Menu</span>
               </button>
-              <button className="quick-btn">
-                <div className="quick-btn-icon">{ClockIcon}</div>
-                <span>Roster</span>
+              <button className="quick-btn" onClick={() => navigate('/menu')}>
+                <div className="quick-btn-icon">{BadgeIcon}</div>
+                <span>Gérer les Catégories</span>
               </button>
-              <button className="quick-btn">
+              <button className="quick-btn" onClick={() => navigate('/menu/plats')}>
                 <div className="quick-btn-icon">{ChartIcon}</div>
-                <span>Reports</span>
+                <span>Gérer les Plats</span>
               </button>
             </div>
           </div>
 
           <div className="menu-performance-section">
             <div className="section-header-flex">
-              <h2 className="section-title" style={{ margin: 0 }}>Menu Performance</h2>
-              <a href="#" className="view-all-link">View All Dishes</a>
+              <h2 className="section-title" style={{ margin: 0 }}>Plats Récents</h2>
+              <button className="view-all-link" onClick={() => navigate('/menu')} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
+                Voir tous les plats
+              </button>
             </div>
             <Card className="menu-performance-card">
-              <table className="performance-table">
-                <thead>
-                  <tr>
-                    <th>DISH NAME</th>
-                    <th>CATEGORY</th>
-                    <th>PRICE</th>
-                    <th>TODAY'S SALES</th>
-                    <th>STATUS</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {MOCK_MENU_PERFORMANCE.map(dish => (
-                    <tr key={dish.id}>
-                      <td style={{ fontWeight: 'var(--weight-bold)', color: 'var(--text-primary)' }}>{dish.name}</td>
-                      <td>{dish.category}</td>
-                      <td style={{ fontWeight: 'var(--weight-bold)', color: 'var(--error-text)' }}>{dish.price}</td>
-                      <td>{dish.sales} Orders</td>
-                      <td>
-                        <Badge variant={dish.statusVariant} className={`perf-badge perf-badge--${dish.statusVariant}`}>
-                          {dish.status}
-                        </Badge>
-                      </td>
+              {data.top_dishes && data.top_dishes.length > 0 ? (
+                <table className="performance-table">
+                  <thead>
+                    <tr>
+                      <th>NOM DU PLAT</th>
+                      <th>CATÉGORIE</th>
+                      <th>PRIX</th>
+                      <th>STATUT</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {data.top_dishes.map(dish => (
+                      <tr key={dish.id}>
+                        <td style={{ fontWeight: 'var(--weight-bold)', color: 'var(--text-primary)' }}>{dish.name}</td>
+                        <td>{dish.category?.name || '-'}</td>
+                        <td style={{ fontWeight: 'var(--weight-bold)', color: 'var(--error-text)' }}>{dish.price} €</td>
+                        <td>
+                          {dish.is_active ? (
+                            <Badge variant="success" className="perf-badge perf-badge--success">
+                              Disponible
+                            </Badge>
+                          ) : (
+                            <Badge variant="warning" className="perf-badge perf-badge--warning">
+                              Indisponible
+                            </Badge>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ) : (
+                <div style={{ padding: 'var(--spacing-4)', textAlign: 'center', color: 'var(--text-secondary)' }}>
+                  Aucun plat trouvé.
+                </div>
+              )}
             </Card>
           </div>
 

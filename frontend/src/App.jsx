@@ -1,92 +1,118 @@
+import { lazy, Suspense, useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchCurrentUser } from "./store/slices/authSlice";
+
 import DashboardLayout from "./layouts/dashboard/DashboardLayout";
-import SuperAdminDashboard from "./features/dashboard/super admin/SuperAdminDashboard";
 import AuthLayout from "./layouts/auth/AuthLayout";
 import PlainAuthLayout from "./layouts/auth/PlainAuthLayout";
+import AuthGuard from "./components/auth/AuthGuard";
+
 import Login from "./features/auth/Login";
 import Register from "./features/auth/Register";
 import ForgotPassword from "./features/auth/ForgotPassword";
 import ResetPassword from "./features/auth/ResetPassword";
 import ResetExpired from "./features/auth/ResetExpired";
 import ResetSuccess from "./features/auth/ResetSuccess";
-import AuthGuard from "./components/auth/AuthGuard";
+import Unauthorized from "./features/auth/Unauthorized";
 
-// Placeholder components for routing structure
-const Unauthorized = () => <div>Unauthorized</div>;
+// Lazy-loaded dashboard pages
+const SuperAdminDashboard = lazy(() => import("./features/dashboard/super admin/SuperAdminDashboard"));
+const RestaurantsList = lazy(() => import("./features/dashboard/restaurants/RestaurantsList"));
+const RestaurantDetails = lazy(() => import("./features/dashboard/restaurants/RestaurantDetails"));
+const RestaurantForm = lazy(() => import("./features/dashboard/restaurants/RestaurantForm"));
+const RestaurantMenu = lazy(() => import("./features/dashboard/restaurants/RestaurantMenu"));
+const UsersList = lazy(() => import("./features/dashboard/users/UsersList"));
+const UserDetails = lazy(() => import("./features/dashboard/users/UserDetails"));
+const UserForm = lazy(() => import("./features/dashboard/users/UserForm"));
+const MenuManagement = lazy(() => import("./features/dashboard/menu/MenuManagement"));
+const MenuStructure = lazy(() => import("./features/dashboard/menu/MenuStructure"));
+const AddDish = lazy(() => import("./features/dashboard/menu/AddDish"));
+const EditDish = lazy(() => import("./features/dashboard/menu/EditDish"));
+const CategoriesManagement = lazy(() => import("./features/dashboard/menu/CategoriesManagement"));
+const Notifications = lazy(() => import("./features/dashboard/Notifications"));
+const Settings = lazy(() => import("./features/dashboard/Settings"));
+const RestaurantAdminDashboard = lazy(() => import("./features/dashboard/restaurant admin/RestaurantAdminDashboard"));
+const OrdersManagement = lazy(() => import("./features/dashboard/menu/OrdersManagement"));
 
-import RestaurantsList from "./features/dashboard/restaurants/RestaurantsList";
-import RestaurantDetails from "./features/dashboard/restaurants/RestaurantDetails";
-import RestaurantForm from "./features/dashboard/restaurants/RestaurantForm";
-import RestaurantMenu from "./features/dashboard/restaurants/RestaurantMenu";
-import UsersList from "./features/dashboard/users/UsersList";
-import UserDetails from "./features/dashboard/users/UserDetails";
-import UserForm from "./features/dashboard/users/UserForm";
-
-// Restaurant Admin Pages
-import MenuManagement from "./features/dashboard/menu/MenuManagement";
-import AddDish from "./features/dashboard/menu/AddDish";
-import EditDish from "./features/dashboard/menu/EditDish";
-import CategoriesManagement from "./features/dashboard/menu/CategoriesManagement";
-import Notifications from "./features/dashboard/Notifications";
-import Settings from "./features/dashboard/Settings";
-import RestaurantAdminDashboard from "./features/dashboard/restaurant admin/RestaurantAdminDashboard";
-const OrdersManagement = () => <div>Orders Management</div>;
+function PageLoader() {
+  return (
+    <div style={{ height: "100vh", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--text-secondary)", fontFamily: "var(--font-family)" }}>
+      Chargement...
+    </div>
+  );
+}
 
 function App() {
+  const dispatch = useDispatch();
+  const { token, user } = useSelector(state => state.auth);
+
+  useEffect(() => {
+    if (token && !user) {
+      dispatch(fetchCurrentUser());
+    }
+  }, [dispatch, token, user]);
+
+  if (token && !user) {
+    return <PageLoader />;
+  }
+
   return (
-    <Routes>
-      <Route path="/" element={<Navigate to="/login" replace />} />
-      
-      {/* Plain Auth Routes (Login & Register) */}
-      <Route element={<PlainAuthLayout />}>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-      </Route>
+    <Suspense fallback={<PageLoader />}>
+      <Routes>
+        <Route path="/" element={<Navigate to="/login" replace />} />
 
-      {/* Standard Auth Routes (Forgot & Reset Password) */}
-      <Route element={<AuthLayout />}>
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/reset-expired" element={<ResetExpired />} />
-        <Route path="/reset-success" element={<ResetSuccess />} />
-      </Route>
-      
-      <Route path="/unauthorized" element={<Unauthorized />} />
-
-      {/* Protected Routes - Super Admin */}
-      <Route element={<AuthGuard allowedRoles={['Super Admin']} />}>
-        <Route element={<DashboardLayout />}>
-          <Route path="/dashboard" element={<SuperAdminDashboard />} />
-          <Route path="/restaurants" element={<RestaurantsList />} />
-          <Route path="/restaurants/add" element={<RestaurantForm />} />
-          <Route path="/restaurants/:id" element={<RestaurantDetails />} />
-          <Route path="/restaurants/:id/menu" element={<RestaurantMenu />} />
-          <Route path="/restaurants/edit/:id" element={<RestaurantForm />} />
-          <Route path="/users" element={<UsersList />} />
-          <Route path="/users/add" element={<UserForm />} />
-          <Route path="/users/:id" element={<UserDetails />} />
-          <Route path="/users/edit/:id" element={<UserForm />} />
+        {/* Plain Auth Routes (Login & Register) */}
+        <Route element={<PlainAuthLayout />}>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
         </Route>
-      </Route>
 
-      {/* Protected Routes - Restaurant Admin */}
-      <Route element={<AuthGuard allowedRoles={['Restaurant Admin', 'Super Admin']} />}>
-        <Route element={<DashboardLayout />}>
-          <Route path="/restaurant-dashboard" element={<RestaurantAdminDashboard />} />
-          <Route path="/notifications" element={<Notifications />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="/menu" element={<MenuManagement />} />
-          <Route path="/menu/categories" element={<CategoriesManagement />} />
-          <Route path="/menu/add" element={<AddDish />} />
-          <Route path="/menu/edit/:id" element={<EditDish />} />
-          <Route path="/orders" element={<OrdersManagement />} />
+        {/* Standard Auth Routes (Forgot & Reset Password) */}
+        <Route element={<AuthLayout />}>
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/reset-expired" element={<ResetExpired />} />
+          <Route path="/reset-success" element={<ResetSuccess />} />
         </Route>
-      </Route>
 
-      {/* Default Redirect */}
-      <Route path="/" element={<Navigate to="/dashboard" replace />} />
-      <Route path="*" element={<Navigate to="/dashboard" replace />} />
-    </Routes>
+        <Route path="/unauthorized" element={<Unauthorized />} />
+
+        {/* Protected Routes - Super Admin */}
+        <Route element={<AuthGuard allowedRoles={['Super Admin']} />}>
+          <Route element={<DashboardLayout />}>
+            <Route path="/dashboard" element={<SuperAdminDashboard />} />
+            <Route path="/restaurants" element={<RestaurantsList />} />
+            <Route path="/restaurants/add" element={<RestaurantForm />} />
+            <Route path="/restaurants/:id" element={<RestaurantDetails />} />
+            <Route path="/restaurants/:id/menu" element={<RestaurantMenu />} />
+            <Route path="/restaurants/edit/:id" element={<RestaurantForm />} />
+            <Route path="/users" element={<UsersList />} />
+            <Route path="/users/add" element={<UserForm />} />
+            <Route path="/users/:id" element={<UserDetails />} />
+            <Route path="/users/edit/:id" element={<UserForm />} />
+          </Route>
+        </Route>
+
+        {/* Protected Routes - Restaurant Admin */}
+        <Route element={<AuthGuard allowedRoles={['Restaurant Admin', 'Super Admin']} />}>
+          <Route element={<DashboardLayout />}>
+            <Route path="/restaurant-dashboard" element={<RestaurantAdminDashboard />} />
+            <Route path="/notifications" element={<Notifications />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/menu" element={<MenuStructure />} />
+            <Route path="/menu/plats" element={<MenuManagement />} />
+            <Route path="/menu/categories" element={<CategoriesManagement />} />
+            <Route path="/menu/add" element={<AddDish />} />
+            <Route path="/menu/edit/:id" element={<EditDish />} />
+            <Route path="/orders" element={<OrdersManagement />} />
+          </Route>
+        </Route>
+
+        {/* Fallback */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </Suspense>
   );
 }
 

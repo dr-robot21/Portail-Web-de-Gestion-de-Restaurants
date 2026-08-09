@@ -1,67 +1,60 @@
-import React from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchUsers, deleteUser } from '../../../store/slices/usersSlice';
 import Button from '../../../components/ui/Button';
 import DataTable from '../../../components/ui/DataTable';
 import Badge from '../../../components/ui/Badge';
 import Input from '../../../components/ui/Input';
+import Modal from '../../../components/ui/Modal';
+import SuccessModal from '../../../components/ui/SuccessModal';
+import ErrorModal from '../../../components/ui/ErrorModal';
 import './UsersList.css';
 
-const MOCK_USERS = [
-  {
-    id: 1,
-    name: 'Sophie Martin',
-    email: 'sophie.m@le-bistrot.fr',
-    role: 'Manager',
-    roleVariant: 'info',
-    establishment: 'Le Bistrot Parisien',
-    isActive: true,
-    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80'
-  },
-  {
-    id: 2,
-    name: 'Antoine Laurent',
-    email: 'antoine.l@le-bistrot.fr',
-    role: 'Serveur',
-    roleVariant: 'warning',
-    establishment: 'Le Bistrot Parisien',
-    isActive: true,
-    avatar: null,
-    initials: 'AL'
-  },
-  {
-    id: 3,
-    name: 'Marc Dubois',
-    email: 'marc.d@hospitalityos.com',
-    role: 'Administrateur',
-    roleVariant: 'default',
-    establishment: 'Tous les établissements',
-    isActive: false,
-    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80'
-  },
-  {
-    id: 4,
-    name: 'Marc Dubois',
-    email: 'marc.d@hospitalityos.com',
-    role: 'Administrateur',
-    roleVariant: 'default',
-    establishment: 'Tous les établissements',
-    isActive: false,
-    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80'
-  },
-  {
-    id: 5,
-    name: 'Marc Dubois',
-    email: 'marc.d@hospitalityos.com',
-    role: 'Administrateur',
-    roleVariant: 'default',
-    establishment: 'Tous les établissements',
-    isActive: false,
-    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80'
-  }
-];
+const ROLE_LABEL = {
+  super_admin: 'Super Admin',
+  restaurant_admin: 'Admin Restaurant',
+};
 
 const UsersList = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { list: users, loading, pagination } = useSelector(state => state.users);
+
+  const [search, setSearch] = useState('');
+  const [roleFilter, setRoleFilter] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
+
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState(null);
+  const [successModalOpen, setSuccessModalOpen] = useState(false);
+  const [errorModalOpen, setErrorModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
+
+  useEffect(() => {
+    dispatch(fetchUsers({ search, role: roleFilter, is_active: statusFilter }));
+  }, [dispatch, search, roleFilter, statusFilter]);
+
+  const handleDelete = (row) => {
+    setUserToDelete(row);
+    setDeleteModalOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!userToDelete) return;
+
+    const result = await dispatch(deleteUser(userToDelete.id));
+    setDeleteModalOpen(false);
+    setUserToDelete(null);
+    if (deleteUser.fulfilled.match(result)) {
+      setModalMessage('Utilisateur supprimé avec succès.');
+      setSuccessModalOpen(true);
+    } else {
+      const msg = typeof result.payload === 'string' ? result.payload : 'Une erreur est survenue.';
+      setModalMessage(msg);
+      setErrorModalOpen(true);
+    }
+  };
 
   const columns = [
     {
@@ -69,11 +62,11 @@ const UsersList = () => {
       accessor: 'user',
       render: (row) => (
         <div className="users-list-user-col">
-          {row.avatar ? (
-            <img src={row.avatar} alt={row.name} className="users-list-avatar" />
+          {row.avatar_url || row.avatar ? (
+            <img src={row.avatar_url || row.avatar} alt={row.name} className="users-list-avatar" />
           ) : (
             <div className="users-list-avatar-placeholder">
-              {row.initials}
+              {row.name?.substring(0, 2).toUpperCase()}
             </div>
           )}
           <div>
@@ -87,23 +80,34 @@ const UsersList = () => {
       header: 'RÔLE',
       accessor: 'role',
       render: (row) => (
-        <Badge variant={row.roleVariant === 'info' ? 'default' : row.roleVariant} style={row.roleVariant === 'info' ? { backgroundColor: '#e0e7ff', color: '#4f46e5' } : row.roleVariant === 'default' ? { backgroundColor: '#1e293b', color: 'white' } : {}}>
-          {row.role}
+        <Badge
+          variant="default"
+          style={
+            row.role === 'super_admin'
+              ? { backgroundColor: '#1e293b', color: 'white' }
+              : { backgroundColor: '#e0e7ff', color: '#4f46e5' }
+          }
+        >
+          {ROLE_LABEL[row.role] || row.role}
         </Badge>
       )
     },
     {
       header: 'ÉTABLISSEMENT',
-      accessor: 'establishment',
-      render: (row) => <span style={{ color: 'var(--text-secondary)' }}>{row.establishment}</span>
+      accessor: 'restaurant',
+      render: (row) => (
+        <span style={{ color: 'var(--text-secondary)' }}>
+          {row.restaurant?.name || (row.role === 'super_admin' ? 'Tous les établissements' : '—')}
+        </span>
+      )
     },
     {
       header: 'STATUT',
-      accessor: 'isActive',
+      accessor: 'is_active',
       render: (row) => (
         <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-2)' }}>
-          <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: row.isActive ? 'var(--error-text)' : '#cbd5e1' }}></span>
-          <span style={{ color: row.isActive ? 'var(--text-primary)' : 'var(--text-secondary)' }}>{row.isActive ? 'Actif' : 'Inactif'}</span>
+          <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: row.is_active ? 'var(--error-text)' : '#cbd5e1' }}></span>
+          <span style={{ color: row.is_active ? 'var(--text-primary)' : 'var(--text-secondary)' }}>{row.is_active ? 'Actif' : 'Inactif'}</span>
         </div>
       )
     },
@@ -112,9 +116,14 @@ const UsersList = () => {
       accessor: 'actions',
       render: (row) => (
         <div className="users-list-actions">
-          {/* Action icons normally go here, mockup shows empty space but it's good practice to have row click */}
           <Button variant="outline" size="sm" onClick={() => navigate(`/users/${row.id}`)} style={{ border: 'none', color: 'var(--text-secondary)' }}>
-             Voir
+            Voir
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => navigate(`/users/edit/${row.id}`)} style={{ border: 'none', color: 'var(--text-secondary)' }}>
+            Modifier
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => handleDelete(row)} style={{ border: 'none', color: 'var(--error-text)' }}>
+            Supprimer
           </Button>
         </div>
       )
@@ -143,43 +152,78 @@ const UsersList = () => {
       <div className="users-toolbar">
         <div style={{ display: 'flex', gap: 'var(--spacing-4)', flex: 1 }}>
           <div style={{ width: '300px' }}>
-            <Input 
-              placeholder="Rechercher par nom, email..." 
-              icon={SearchIcon} 
+            <Input
+              placeholder="Rechercher par nom, email..."
+              icon={SearchIcon}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
             />
           </div>
-          
+
           <div className="users-filter-select-wrapper">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '8px', color: 'var(--text-secondary)' }}><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
-            <select className="users-filter-select">
-              <option>Tous les rôles</option>
-              <option>Administrateur</option>
-              <option>Manager</option>
-              <option>Serveur</option>
+            <select className="users-filter-select" value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)}>
+              <option value="">Tous les rôles</option>
+              <option value="super_admin">Super Admin</option>
+              <option value="restaurant_admin">Admin Restaurant</option>
             </select>
           </div>
 
           <div className="users-filter-select-wrapper">
-            <select className="users-filter-select">
-              <option>Statut : Actif</option>
-              <option>Statut : Inactif</option>
+            <select className="users-filter-select" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+              <option value="">Tous les statuts</option>
+              <option value="true">Actif</option>
+              <option value="false">Inactif</option>
             </select>
           </div>
         </div>
 
         <div className="users-total-count">
-          Total : 42 utilisateurs
+          Total : {pagination?.total || users.length} utilisateurs
         </div>
       </div>
 
       <div className="users-table-wrapper">
-        <DataTable 
-          columns={columns} 
-          data={MOCK_USERS} 
-          pagination={true}
-          pageSize={5}
-        />
+        {loading ? (
+          <div style={{ padding: 'var(--spacing-4)', textAlign: 'center' }}>Chargement...</div>
+        ) : (
+          <DataTable
+            columns={columns}
+            data={users}
+            pagination={true}
+            pageSize={10}
+          />
+        )}
       </div>
+
+      {/* Delete Confirmation Modal */}
+      <Modal isOpen={deleteModalOpen} onClose={() => setDeleteModalOpen(false)} hideCloseButton={true}>
+        <div style={{ textAlign: 'center', padding: 'var(--spacing-6) var(--spacing-4)' }}>
+          <div style={{ width: '64px', height: '64px', borderRadius: '50%', backgroundColor: 'var(--error-bg)', color: 'var(--error-text)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto var(--spacing-4)' }}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+              <line x1="12" y1="9" x2="12" y2="13"></line>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+          </div>
+          <h2 style={{ fontFamily: 'var(--font-family)', fontSize: 'var(--font-xl)', margin: '0 0 var(--spacing-2) 0', color: 'var(--text-primary)' }}>
+            Confirmer la suppression
+          </h2>
+          <p style={{ fontFamily: 'var(--font-family)', fontSize: 'var(--font-sm)', color: 'var(--text-secondary)', marginBottom: 'var(--spacing-6)', lineHeight: '1.5' }}>
+            Êtes-vous sûr de vouloir supprimer l'utilisateur <strong>"{userToDelete?.name}"</strong> ?<br />
+            Cette action est irréversible.
+          </p>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: 'var(--spacing-4)' }}>
+            <Button variant="outline" onClick={() => setDeleteModalOpen(false)}>Annuler</Button>
+            <Button variant="primary" style={{ backgroundColor: 'var(--error-text)' }} onClick={confirmDelete} disabled={loading}>
+              {loading ? 'Suppression...' : 'Supprimer'}
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      <SuccessModal isOpen={successModalOpen} onClose={() => setSuccessModalOpen(false)} message={modalMessage} />
+      <ErrorModal isOpen={errorModalOpen} onClose={() => setErrorModalOpen(false)} message={modalMessage} />
     </div>
   );
 };

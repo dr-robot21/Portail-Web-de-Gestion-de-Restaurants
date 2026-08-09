@@ -1,9 +1,9 @@
-import React from 'react';
 import Badge from '../../../../components/ui/Badge';
 import './DishCard.css';
 
 const DishCard = ({ dish, onEdit, onView, onDelete }) => {
-  const { name, price, description, image, isActive } = dish;
+  const { name, price, description, image, image_url, is_active } = dish;
+  const dishImage = image_url || image || 'https://via.placeholder.com/300x200';
 
   const EditIcon = (
     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -29,10 +29,10 @@ const DishCard = ({ dish, onEdit, onView, onDelete }) => {
   return (
     <div className="dish-card">
       <div className="dish-card-image-container">
-        <img src={image || 'https://via.placeholder.com/300x200'} alt={name} className="dish-card-image" />
+        <img src={dishImage} alt={name} className="dish-card-image" />
         <div className="dish-card-status">
-          <Badge variant={isActive ? 'success' : 'default'}>
-            {isActive ? 'Active' : 'Inactive'}
+          <Badge variant={is_active ? 'success' : 'default'}>
+            {is_active ? 'Active' : 'Inactive'}
           </Badge>
         </div>
       </div>
@@ -40,7 +40,7 @@ const DishCard = ({ dish, onEdit, onView, onDelete }) => {
       <div className="dish-card-content">
         <div className="dish-card-header">
           <h3 className="dish-card-title">{name}</h3>
-          <span className="dish-card-price">{price.toFixed(2)} €</span>
+          <span className="dish-card-price">{Number(price).toFixed(2)} €</span>
         </div>
         
         <p className="dish-card-description">{description}</p>

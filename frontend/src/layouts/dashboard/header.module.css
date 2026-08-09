@@ -116,13 +116,17 @@
 }
 
 .searchRslts .rslt {
-  display: block;
-  padding: 1rem;
-  width: 100%;
   display: flex;
   align-items: center;
   gap: 8px;
+  padding: 1rem;
+  width: 100%;
+  border: none;
   border-bottom: 1px solid #eeeeee6f;
+  background-color: transparent;
+  text-align: left;
+  cursor: pointer;
+  font-family: var(--font-family, inherit);
 }
 
 .searchRslts .rslt:hover {
@@ -165,38 +169,58 @@
   background-color: #eeeeee8c;
 }
 
-.notificationsDropDown .icon::before {
-  content: '';
-  position: absolute;
-  top: 9px;
-  right: 9px;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background-color: var(--accent);
-}
-
-
 .notificationsDropDown .icon svg {
   width: 100%;
   height: 100%;
   fill: var(--text-color);
 }
 
+.notificationsDropDown .badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 8px;
+  background-color: var(--accent, #b91c1c);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 16px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
 .notificationsDropDown .dropDown {
   position: absolute;
   display: none;
-  right: -30px;
+  right: 0;
+  top: calc(100% + 8px);
   background-color: #FFF;
   border: var(--box-border);
-  box-shadow: var(--shadow);
-  border-radius: 8px;
+  box-shadow: var(--shadow-lg);
+  border-radius: 12px;
   overflow: hidden;
-  width: 320px;
+  width: 340px;
+  z-index: 100;
+  transform-origin: top right;
 }
 
 .notificationsDropDown .dropDown.active {
   display: block;
+  animation: notifDropdownIn 0.18s ease-out;
+}
+
+@keyframes notifDropdownIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .notificationsDropDown button ,
@@ -224,51 +248,67 @@
 
 .notificationsDropDown .heading h3 {
   font-size: 1rem;
+  margin: 0;
 }
 .notificationsDropDown .heading button {
   font-size: .75rem;
 }
 
+.notificationsDropDown .heading button:disabled {
+  color: #94a3b8;
+  cursor: default;
+}
+
+.notificationsDropDown .heading button:disabled:hover {
+  text-decoration: none;
+}
+
 .notificationsDropDown .body {
   overflow: auto;
-  max-height: 202px;
+  max-height: 252px;
 }
 
 
 .notificationsDropDown .notification {
   all: unset;
-  padding: 1rem;
+  padding: 0.875rem 1rem;
   display: flex;
-  align-items: first baseline;
+  align-items: flex-start;
   gap: 12px;
   border-bottom: var(--box-border-l);
   cursor: pointer;
 }
 
 .notificationsDropDown .notification:hover {
-  background-color: #eee;
+  background-color: #f8fafc;
 }
 
 .notificationsDropDown .notification .status {
   width: 8px;
   height: 8px;
   border-radius: 50%;
+  background-color: #cbd5e1;
+  flex-shrink: 0;
+  margin-top: 5px;
 }
 
 .notificationsDropDown .notification.new .status {
   background-color: var(--accent-d1);
 }
 
-.notificationsDropDown .notification.new .infos {
+.notificationsDropDown .notification .infos {
   flex: 1;
+  min-width: 0;
 }
 
 .notificationsDropDown .notification h3 {
   width: 100%;
   font-weight: 400;
   font-size: .85rem;
-  margin-bottom: 2px;
+  line-height: 1.35;
+  margin-bottom: 3px;
   color: #191C1D;
+  word-break: break-word;
 }
 
 .notificationsDropDown .notification.new h3 {

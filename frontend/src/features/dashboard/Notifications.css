@@ -67,6 +67,14 @@
   transition: background-color var(--transition-fast);
 }
 
+.notification-item--unread {
+  background-color: #fdf6f6;
+}
+
+.notification-item--unread:hover {
+  background-color: #fbf0f0;
+}
+
 .notification-item:last-child {
   border-bottom: none;
 }
@@ -142,6 +150,26 @@
   height: 10px;
   border-radius: 50%;
   background-color: var(--primary);
+}
+
+.notification-delete-btn {
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background-color: var(--surface);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.notification-delete-btn:hover {
+  color: var(--error-text);
+  border-color: var(--error-border);
+  background-color: var(--error-bg);
 }
 
 .notifications-footer {

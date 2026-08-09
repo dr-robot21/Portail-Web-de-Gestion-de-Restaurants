@@ -1,22 +1,17 @@
-import React from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
-/**
- * A basic auth guard to protect routes based on roles.
- * You should integrate this with your actual authentication context/state.
- */
 const AuthGuard = ({ allowedRoles = [] }) => {
   const location = useLocation();
-  
-  // TODO: Replace with actual auth context check
-  // For now, simulate an authenticated user with a specific role
-  const isAuthenticated = true; 
-  const userRole = 'Super Admin'; // could be 'Restaurant Admin'
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
 
   if (!isAuthenticated) {
     // Redirect to login page and preserve the intended destination
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
+
+  // Assuming user role is structured like user.role
+  const userRole = user?.role === 'super_admin' ? 'Super Admin' : (user?.role === 'restaurant_admin' ? 'Restaurant Admin' : null);
 
   if (allowedRoles.length > 0 && !allowedRoles.includes(userRole)) {
     // Role not authorized, redirect to an unauthorized or home page

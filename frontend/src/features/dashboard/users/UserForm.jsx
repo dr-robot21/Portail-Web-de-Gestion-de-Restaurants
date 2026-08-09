@@ -1,15 +1,97 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link, useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchUserById, createUser, updateUser } from '../../../store/slices/usersSlice';
 import Card from '../../../components/ui/Card';
 import Input from '../../../components/ui/Input';
 import Button from '../../../components/ui/Button';
 import Switch from '../../../components/ui/Switch';
+import SuccessModal from '../../../components/ui/SuccessModal';
+import ErrorModal from '../../../components/ui/ErrorModal';
 import './UserForm.css';
 
 const UserForm = () => {
   const { id } = useParams();
   const isEdit = Boolean(id);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const { loading } = useSelector(state => state.users);
+
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    role: '',
+    password: '',
+    password_confirmation: '',
+    is_active: true,
+    force_password_change: !isEdit,
+  });
+  const [avatarFile, setAvatarFile] = useState(null);
+  const [avatarPreview, setAvatarPreview] = useState(null);
+
+  const [successModalOpen, setSuccessModalOpen] = useState(false);
+  const [errorModalOpen, setErrorModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
+
+  useEffect(() => {
+    if (isEdit) {
+      (async () => {
+        const result = await dispatch(fetchUserById(id));
+        if (fetchUserById.fulfilled.match(result)) {
+          const u = result.payload;
+          setFormData({
+            name: u.name || '',
+            email: u.email || '',
+            phone: u.phone || '',
+            role: u.role || '',
+            password: '',
+            password_confirmation: '',
+            is_active: u.is_active ?? true,
+            force_password_change: false,
+          });
+          if (u.avatar_url || u.avatar) setAvatarPreview(u.avatar_url || u.avatar);
+        }
+      })();
+    }
+  }, [dispatch, id, isEdit]);
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
+  };
+
+  const handleAvatarChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setAvatarFile(file);
+      setAvatarPreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleSubmit = async () => {
+    const payload = { ...formData };
+    if (avatarFile) payload.avatar = avatarFile;
+    if (!payload.password) {
+      delete payload.password;
+      delete payload.password_confirmation;
+    }
+
+    const result = isEdit
+      ? await dispatch(updateUser({ id, userData: payload }))
+      : await dispatch(createUser(payload));
+
+    if ((isEdit ? updateUser : createUser).fulfilled.match(result)) {
+      setModalMessage(isEdit ? 'Utilisateur modifié avec succès.' : 'Utilisateur créé avec succès.');
+      setSuccessModalOpen(true);
+    } else {
+      const err = result.payload;
+      const msg = typeof err === 'object' ? Object.values(err).flat().join(' ') : (err || 'Une erreur est survenue.');
+      setModalMessage(msg);
+      setErrorModalOpen(true);
+    }
+  };
 
   const UserIcon = (
     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--error-text)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '8px' }}>
@@ -31,13 +113,6 @@ const UserForm = () => {
     </svg>
   );
 
-  const EyeIcon = (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-      <circle cx="12" cy="12" r="3"></circle>
-    </svg>
-  );
-
   const InfoIcon = (
     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '8px', flexShrink: 0 }}>
       <circle cx="12" cy="12" r="10"></circle>
@@ -51,7 +126,6 @@ const UserForm = () => {
       <polyline points="16 16 12 12 8 16"></polyline>
       <line x1="12" y1="12" x2="12" y2="21"></line>
       <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"></path>
-      <polyline points="16 16 12 12 8 16"></polyline>
     </svg>
   );
 
@@ -65,31 +139,28 @@ const UserForm = () => {
         <h1 className="user-form-title">{isEdit ? 'Modifier un Utilisateur' : 'Ajouter un Utilisateur'}</h1>
         <div className="user-form-header-actions">
           <Button variant="outline" onClick={() => navigate('/users')}>Annuler</Button>
-          <Button variant="primary" style={{ backgroundColor: 'var(--error-text)', borderColor: 'var(--error-text)' }}>
-            {isEdit ? 'Enregistrer' : 'Créer l\'utilisateur'}
+          <Button variant="primary" style={{ backgroundColor: 'var(--error-text)', borderColor: 'var(--error-text)' }} onClick={handleSubmit} disabled={loading}>
+            {loading ? 'Enregistrement...' : (isEdit ? 'Enregistrer' : "Créer l'utilisateur")}
           </Button>
         </div>
       </div>
 
       <div className="user-form-grid">
         <div className="user-form-main">
-          
+
           <Card className="user-form-card">
             <h2 className="user-form-card-title">{UserIcon} Informations Personnelles</h2>
             <div className="user-form-row">
               <div className="user-form-col">
-                <Input label="Prénom" defaultValue={isEdit ? "Jean" : ""} />
+                <Input name="name" value={formData.name} onChange={handleChange} label="Nom complet" placeholder="Jean Dupont" />
               </div>
               <div className="user-form-col">
-                <Input label="Nom" defaultValue={isEdit ? "Dupont" : ""} />
+                <Input name="phone" value={formData.phone} onChange={handleChange} label="Numéro de Téléphone" placeholder="+33 6 00 00 00 00" />
               </div>
             </div>
             <div className="user-form-row" style={{ marginTop: 'var(--spacing-4)' }}>
               <div className="user-form-col">
-                <Input label="Email Professionnel" type="email" defaultValue={isEdit ? "jean.dupont@hospitalityos.fr" : ""} />
-              </div>
-              <div className="user-form-col">
-                <Input label="Numéro de Téléphone" defaultValue={isEdit ? "+33 6 00 00 00 00" : ""} />
+                <Input name="email" value={formData.email} onChange={handleChange} label="Email Professionnel" type="email" placeholder="jean@exemple.com" />
               </div>
             </div>
           </Card>
@@ -98,33 +169,30 @@ const UserForm = () => {
             <h2 className="user-form-card-title">{ShieldIcon} Rôle du Compte</h2>
             <div className="ui-input-header"><label className="ui-input-label">Type d'Accès</label></div>
             <div className="ui-input-wrapper">
-              <select className="user-form-select" defaultValue={isEdit ? "Administrateur" : ""}>
-                {!isEdit && <option value="">Sélectionner un rôle</option>}
-                <option value="Administrateur">Administrateur</option>
-                <option value="Manager">Manager</option>
-                <option value="Serveur">Serveur</option>
+              <select name="role" value={formData.role} onChange={handleChange} className="user-form-select">
+                <option value="">Sélectionner un rôle</option>
+                <option value="super_admin">Super Admin</option>
+                <option value="restaurant_admin">Admin Restaurant</option>
               </select>
             </div>
-            
             <div className="user-form-info-box">
               {InfoIcon}
-              <span>Le rôle définit les permissions globales de l'utilisateur sur la plateforme HospitalityOS.</span>
+              <span>Le rôle définit les permissions globales de l'utilisateur sur la plateforme.</span>
             </div>
           </Card>
 
           <Card className="user-form-card">
-            <h2 className="user-form-card-title">{LockIcon} Sécurité & Mot de Passe</h2>
+            <h2 className="user-form-card-title">{LockIcon} Sécurité &amp; Mot de Passe</h2>
             <div className="user-form-row">
               <div className="user-form-col">
-                <Input label="Mot de passe temporaire" type="password" defaultValue="••••••••" icon={EyeIcon} />
+                <Input name="password" value={formData.password} onChange={handleChange} label={isEdit ? 'Nouveau mot de passe (optionnel)' : 'Mot de passe *'} type="password" placeholder="••••••••" />
               </div>
               <div className="user-form-col">
-                <Input label="Confirmer le mot de passe" type="password" defaultValue="••••••••" />
+                <Input name="password_confirmation" value={formData.password_confirmation} onChange={handleChange} label="Confirmer le mot de passe" type="password" placeholder="••••••••" />
               </div>
             </div>
-            
             <label className="user-form-checkbox-label">
-              <input type="checkbox" defaultChecked={!isEdit} />
+              <input type="checkbox" name="force_password_change" checked={formData.force_password_change} onChange={handleChange} />
               <span>Forcer le changement de mot de passe à la première connexion</span>
             </label>
           </Card>
@@ -132,28 +200,25 @@ const UserForm = () => {
         </div>
 
         <div className="user-form-sidebar">
-          
+
           <Card className="user-form-card user-form-photo-card">
             <h2 className="user-form-photo-title">Photo de Profil</h2>
-            
-            {isEdit ? (
+            {avatarPreview ? (
               <div className="user-form-photo-preview-container">
                 <div className="user-form-photo-preview">
-                  <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=256&q=80" alt="Avatar" />
+                  <img src={avatarPreview} alt="Avatar" />
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-3)', width: '100%' }}>
-                  <Button variant="outline" style={{ color: 'var(--text-secondary)' }}>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '8px' }}><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg> 
+                  <Button variant="outline" style={{ color: 'var(--text-secondary)' }} onClick={() => document.getElementById('avatar-upload').click()}>
                     Changer l'image
                   </Button>
-                  <Button variant="outline" style={{ color: 'var(--error-text)', borderColor: 'var(--error-border)' }}>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '8px' }}><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg> 
+                  <Button variant="outline" style={{ color: 'var(--error-text)', borderColor: 'var(--error-border)' }} onClick={() => { setAvatarPreview(null); setAvatarFile(null); }}>
                     Supprimer l'image
                   </Button>
                 </div>
               </div>
             ) : (
-              <div className="user-form-upload-container">
+              <div className="user-form-upload-container" onClick={() => document.getElementById('avatar-upload').click()} style={{ cursor: 'pointer' }}>
                 <div className="user-form-upload-zone">
                   {UploadCloudIcon}
                   <div className="user-form-upload-text">Glisser ou Cliquez</div>
@@ -161,6 +226,7 @@ const UserForm = () => {
                 <div className="user-form-upload-subtext">JPG, PNG ou SVG. Max 2MB.</div>
               </div>
             )}
+            <input type="file" id="avatar-upload" style={{ display: 'none' }} accept="image/*" onChange={handleAvatarChange} />
           </Card>
 
           <Card className="user-form-card">
@@ -170,12 +236,26 @@ const UserForm = () => {
                 <div className="user-form-status-label">Activer Immédiatement</div>
                 <div className="user-form-status-desc">L'utilisateur recevra un mail.</div>
               </div>
-              <Switch checked={true} onChange={() => {}} />
+              <Switch
+                checked={formData.is_active}
+                onChange={(e) => setFormData(prev => ({ ...prev, is_active: e.target.checked }))}
+              />
             </div>
           </Card>
 
         </div>
       </div>
+
+      <SuccessModal
+        isOpen={successModalOpen}
+        onClose={() => { setSuccessModalOpen(false); navigate('/users'); }}
+        message={modalMessage}
+      />
+      <ErrorModal
+        isOpen={errorModalOpen}
+        onClose={() => setErrorModalOpen(false)}
+        message={modalMessage}
+      />
     </div>
   );
 };

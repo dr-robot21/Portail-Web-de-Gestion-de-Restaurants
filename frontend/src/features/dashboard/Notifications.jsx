@@ -1,169 +1,195 @@
-import React from 'react';
+import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  fetchNotifications,
+  markNotificationRead,
+  markAllNotificationsRead,
+  deleteNotification,
+} from '../../store/slices/notificationsSlice';
 import Button from '../../components/ui/Button';
 import Card from '../../components/ui/Card';
+import Modal from '../../components/ui/Modal';
 import './Notifications.css';
 
 const Notifications = () => {
-  const SettingsIcon = (
-    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '8px' }}>
-      <circle cx="12" cy="12" r="3"></circle>
-      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+  const dispatch = useDispatch();
+  const { list: notifications, loading, unreadCount } = useSelector(state => state.notifications);
+  const [confirmDelete, setConfirmDelete] = useState(null);
+
+  useEffect(() => {
+    dispatch(fetchNotifications());
+  }, [dispatch]);
+
+  const handleItemClick = (notification) => {
+    if (!notification.is_read) {
+      dispatch(markNotificationRead(notification.id));
+    }
+  };
+
+  const handleMarkAllRead = () => {
+    if (unreadCount > 0) {
+      dispatch(markAllNotificationsRead());
+    }
+  };
+
+  const confirmDeleteNotification = async () => {
+    if (!confirmDelete) return;
+    await dispatch(deleteNotification(confirmDelete.id));
+    setConfirmDelete(null);
+  };
+
+  const formatTime = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMin = Math.floor(diffMs / 60000);
+    if (diffMin < 1) return 'À l\'instant';
+    if (diffMin < 60) return `Il y a ${diffMin} min`;
+    const diffH = Math.floor(diffMin / 60);
+    if (diffH < 24) return `Il y a ${diffH} h`;
+    const diffD = Math.floor(diffH / 24);
+    if (diffD === 1) return 'Hier';
+    if (diffD < 7) return `Il y a ${diffD} jours`;
+    return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' });
+  };
+
+  const isToday = (dateString) => {
+    if (!dateString) return false;
+    const date = new Date(dateString);
+    const now = new Date();
+    return date.toDateString() === now.toDateString();
+  };
+
+  const today = notifications.filter(n => isToday(n.created_at));
+  const earlier = notifications.filter(n => !isToday(n.created_at));
+
+  const iconForType = (type) => {
+    switch (type) {
+      case 'success': return 'var(--color-success, #22c55e)';
+      case 'warning': return '#d97706';
+      case 'error': return 'var(--error-text)';
+      default: return 'var(--text-secondary)';
+    }
+  };
+
+  const TrashIcon = (
+    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="3 6 5 6 21 6"></polyline>
+      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
     </svg>
   );
 
   const CheckIcon = (
-    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '8px' }}>
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <polyline points="20 6 9 17 4 12"></polyline>
-      <polyline points="20 12 20 12"></polyline> {/* double check trick */}
-      <path d="M15 12L9 18l-5-5" style={{ opacity: 0.5 }}></path>
     </svg>
   );
 
-  const StoreIcon = (
+  const BellIcon = (
     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-      <polyline points="9 22 9 12 15 12 15 22"></polyline>
+      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+      <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
     </svg>
   );
 
-  const UserPlusIcon = (
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-      <circle cx="8.5" cy="7" r="4"></circle>
-      <line x1="20" y1="8" x2="20" y2="14"></line>
-      <line x1="23" y1="11" x2="17" y2="11"></line>
-    </svg>
-  );
-
-  const AlertTriangleIcon = (
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
-      <line x1="12" y1="9" x2="12" y2="13"></line>
-      <line x1="12" y1="17" x2="12.01" y2="17"></line>
-    </svg>
-  );
-
-  const RefreshCwIcon = (
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="23 4 23 10 17 10"></polyline>
-      <polyline points="1 20 1 14 7 14"></polyline>
-      <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
-    </svg>
-  );
-
-  const FileTextIcon = (
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-      <polyline points="14 2 14 8 20 8"></polyline>
-      <line x1="16" y1="13" x2="8" y2="13"></line>
-      <line x1="16" y1="17" x2="8" y2="17"></line>
-      <polyline points="10 9 9 9 8 9"></polyline>
-    </svg>
+  const renderItem = (notification) => (
+    <div
+      key={notification.id}
+      className={`notification-item${notification.is_read ? '' : ' notification-item--unread'}`}
+      onClick={() => handleItemClick(notification)}
+      style={{ cursor: 'pointer' }}
+    >
+      <div className="notification-icon" style={{ backgroundColor: 'var(--background)', color: iconForType(notification.type) }}>
+        {BellIcon}
+      </div>
+      <div className="notification-content">
+        <h3 className="notification-item-title">{notification.title}</h3>
+        <p className="notification-item-desc">{notification.message}</p>
+      </div>
+      <div className="notification-meta">
+        <span className="notification-time">{formatTime(notification.created_at)}</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-2)' }}>
+          {!notification.is_read && <span className="notification-unread-dot"></span>}
+          <button
+            className="notification-delete-btn"
+            title="Supprimer"
+            onClick={(e) => { e.stopPropagation(); setConfirmDelete(notification); }}
+          >
+            {TrashIcon}
+          </button>
+        </div>
+      </div>
+    </div>
   );
 
   return (
     <div className="notifications-page">
       <div className="notifications-header">
         <div>
-          <h1 className="notifications-title">Centre du notifications</h1>
-          {/* Using the text exactly as it appears in the mockup, even if it looks like a copy-paste error from Menu */}
-          <p className="notifications-subtitle">Gérez votre menu, les prix et la disponibilité des plats.</p>
+          <h1 className="notifications-title">Centre de notifications</h1>
+          <p className="notifications-subtitle">Consultez les alertes et les mises à jour importantes de votre compte.</p>
         </div>
         <div className="notifications-header-actions">
-          <Button variant="outline" className="notifications-btn-param">
-            {SettingsIcon} Paramètres
-          </Button>
-          <Button variant="primary">
-            {CheckIcon} Tout marquer<br/>comme lu
+          <Button variant="outline" className="notifications-btn-param" onClick={handleMarkAllRead} disabled={unreadCount === 0}>
+            {CheckIcon} Tout marquer comme lu
           </Button>
         </div>
       </div>
 
-      <Card className="notifications-card">
-        {/* Section: Aujourd'hui */}
-        <div className="notifications-section">
-          <h2 className="notifications-section-title">Aujourd'hui</h2>
-          
-          <div className="notification-item">
-            <div className="notification-icon notification-icon--red">
-              {StoreIcon}
-            </div>
-            <div className="notification-content">
-              <h3 className="notification-item-title">Nouveau restaurant créé</h3>
-              <p className="notification-item-desc">Le restaurant "Bistro Central" a finalisé son intégration sur la plateforme et est prêt à être configuré.</p>
-            </div>
-            <div className="notification-meta">
-              <span className="notification-time">Il y a 10 min</span>
-              <span className="notification-unread-dot"></span>
-            </div>
+      {loading && notifications.length === 0 ? (
+        <Card className="notifications-card">
+          <div style={{ padding: 'var(--spacing-10)', textAlign: 'center', color: 'var(--text-secondary)' }}>
+            Chargement des notifications...
           </div>
-
-          <div className="notification-item">
-            <div className="notification-icon notification-icon--blue">
-              {UserPlusIcon}
-            </div>
-            <div className="notification-content">
-              <h3 className="notification-item-title">Nouvelle assignation</h3>
-              <p className="notification-item-desc">Marc Tremblay a été assigné au rôle de Manager pour le restaurant "Bistro Central".</p>
-            </div>
-            <div className="notification-meta">
-              <span className="notification-time">Il y a 1 h</span>
-              <span className="notification-unread-dot"></span>
-            </div>
+        </Card>
+      ) : notifications.length === 0 ? (
+        <Card className="notifications-card">
+          <div style={{ padding: 'var(--spacing-12)', textAlign: 'center', color: 'var(--text-secondary)' }}>
+            <div style={{ marginBottom: 'var(--spacing-3)', opacity: 0.5 }}>{BellIcon}</div>
+            Aucune notification pour le moment.
           </div>
+        </Card>
+      ) : (
+        <Card className="notifications-card">
+          {today.length > 0 && (
+            <div className="notifications-section">
+              <h2 className="notifications-section-title">Aujourd'hui</h2>
+              {today.map(renderItem)}
+            </div>
+          )}
 
-          <div className="notification-item">
-            <div className="notification-icon notification-icon--gray">
-              {AlertTriangleIcon}
+          {earlier.length > 0 && (
+            <div className="notifications-section notifications-section--alt">
+              <h2 className="notifications-section-title">Plus tôt</h2>
+              {earlier.map(renderItem)}
             </div>
-            <div className="notification-content">
-              <h3 className="notification-item-title">Alerte de synchronisation</h3>
-              <p className="notification-item-desc">Le menu de "La Trattoria" a rencontré une erreur de synchronisation avec les terminaux de paiement.</p>
-            </div>
-            <div className="notification-meta">
-              <span className="notification-time">Il y a 3 h</span>
-              {/* No unread dot */}
-            </div>
+          )}
+        </Card>
+      )}
+
+      <Modal isOpen={!!confirmDelete} onClose={() => setConfirmDelete(null)} hideCloseButton={true}>
+        <div style={{ textAlign: 'center', padding: 'var(--spacing-6) var(--spacing-4)' }}>
+          <div style={{
+            width: '64px', height: '64px', borderRadius: '50%',
+            backgroundColor: 'var(--error-bg)', color: 'var(--error-text)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            margin: '0 auto var(--spacing-4)'
+          }}>
+            {TrashIcon}
           </div>
-        </div>
-
-        {/* Section: Plus tôt */}
-        <div className="notifications-section notifications-section--alt">
-          <h2 className="notifications-section-title">Plus tôt</h2>
-          
-          <div className="notification-item">
-            <div className="notification-icon notification-icon--gray">
-              {RefreshCwIcon}
-            </div>
-            <div className="notification-content">
-              <h3 className="notification-item-title">Mise à jour du système</h3>
-              <p className="notification-item-desc">La mise à jour de la plateforme v2.4 a été déployée avec succès. Aucun temps d'arrêt signalé.</p>
-            </div>
-            <div className="notification-meta">
-              <span className="notification-time">Hier, 23:00</span>
-            </div>
-          </div>
-
-          <div className="notification-item">
-            <div className="notification-icon notification-icon--gray">
-              {FileTextIcon}
-            </div>
-            <div className="notification-content">
-              <h3 className="notification-item-title">Rapport mensuel généré</h3>
-              <p className="notification-item-desc">Les rapports de performance globaux pour le mois de Mai sont maintenant disponibles en téléchargement.</p>
-            </div>
-            <div className="notification-meta">
-              <span className="notification-time">Hier, 08:00</span>
-            </div>
+          <h2 style={{ fontFamily: 'var(--font-family)', fontSize: 'var(--font-xl)', margin: '0 0 var(--spacing-2) 0', color: 'var(--text-primary)' }}>
+            Confirmer la suppression
+          </h2>
+          <p style={{ fontFamily: 'var(--font-family)', fontSize: 'var(--font-sm)', color: 'var(--text-secondary)', marginBottom: 'var(--spacing-6)', lineHeight: '1.5' }}>
+            Êtes-vous sûr de vouloir supprimer cette notification ?
+          </p>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: 'var(--spacing-4)' }}>
+            <Button variant="outline" onClick={() => setConfirmDelete(null)}>Annuler</Button>
+            <Button variant="primary" style={{ backgroundColor: 'var(--error-text)' }} onClick={confirmDeleteNotification}>Supprimer</Button>
           </div>
         </div>
-      </Card>
-
-      <div className="notifications-footer">
-        <Button variant="outline" className="notifications-load-more">
-          Charger plus
-        </Button>
-      </div>
+      </Modal>
     </div>
   );
 };

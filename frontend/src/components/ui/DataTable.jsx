@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import './DataTable.css';
 
 /* ─── Pagination Component ───────────────────────────────────── */
@@ -206,7 +206,7 @@ const DataTable = ({
         </table>
       </div>
 
-      {pagination && (
+      {pagination && totalPages > 1 && (
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}

@@ -20,6 +20,7 @@
   box-shadow: var(--shadow-lg);
   position: relative;
   max-width: 90vw;
+  min-width: 440px;
   max-height: 90vh;
   overflow-y: auto;
   animation: modalSlideUp var(--transition-fast);

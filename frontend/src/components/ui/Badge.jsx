@@ -1,10 +1,10 @@
-import React from 'react';
 import './Badge.css';
 
 const Badge = ({
   children,
   variant = 'default', // 'default', 'success', 'error', 'warning', 'info'
   className = '',
+  showDot = true,
 }) => {
   const classes = [
     'ui-badge',
@@ -14,8 +14,8 @@ const Badge = ({
 
   return (
     <span className={classes}>
-      {variant === 'success' && <span className="ui-badge-dot"></span>}
-      {variant === 'default' && <span className="ui-badge-dot ui-badge-dot--default"></span>}
+      {showDot && variant === 'success' && <span className="ui-badge-dot"></span>}
+      {showDot && variant === 'default' && <span className="ui-badge-dot ui-badge-dot--default"></span>}
       {children}
     </span>
   );

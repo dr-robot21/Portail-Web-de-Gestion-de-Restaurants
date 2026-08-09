@@ -3,6 +3,11 @@
   position: relative;
 }
 
+/* Dish detail modal — wider than default so it reads landscape (700px) */
+.ui-modal-content.menu-view-modal {
+  min-width: 700px;
+}
+
 .menu-header {
   display: flex;
   justify-content: space-between;

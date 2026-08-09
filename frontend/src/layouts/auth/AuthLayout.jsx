@@ -1,4 +1,3 @@
-import React from 'react';
 import { Outlet } from 'react-router-dom';
 import Card from '../../components/ui/Card';
 import './AuthLayout.css';

@@ -1,71 +1,64 @@
-import React from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchRestaurants } from '../../../store/slices/restaurantsSlice';
+import api from '../../../services/api';
 import Button from '../../../components/ui/Button';
 import DataTable from '../../../components/ui/DataTable';
 import Badge from '../../../components/ui/Badge';
 import Input from '../../../components/ui/Input';
+import Modal from '../../../components/ui/Modal';
+import SuccessModal from '../../../components/ui/SuccessModal';
+import ErrorModal from '../../../components/ui/ErrorModal';
 import './RestaurantsList.css';
 
-const MOCK_RESTAURANTS = [
-  {
-    id: 'RES-001',
-    name: 'Lumina Prime',
-    address: '1240 Downtown Ave',
-    city: 'Metropolis, NY 10001',
-    manager: 'S. Manager',
-    email: 'gm@lumina.com',
-    phone: '+1 (555) 019-2834',
-    isActive: true,
-    logo: 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80'
-  },
-  {
-    id: 'RES-042',
-    name: 'Verdant Heights',
-    address: '88 Peak Road',
-    city: 'Westcliff, CA 90210',
-    manager: 'J. Doe',
-    email: 'contact@verdant.com',
-    phone: '+1 (555) 882-1092',
-    isActive: false,
-    logo: null
-  },
-  {
-    id: 'RES-018',
-    name: 'The Brass Oyster',
-    address: 'Pier 4, Harbor Bay',
-    city: 'Seaport, MA 02110',
-    manager: 'A. Fisher',
-    email: 'info@brassoyster.co',
-    phone: '+1 (555) 443-9001',
-    isActive: true,
-    logo: 'https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80'
-  },
-  {
-    id: 'RES-019',
-    name: 'The Brass Oyster',
-    address: 'Pier 4, Harbor Bay',
-    city: 'Seaport, MA 02110',
-    manager: 'A. Fisher',
-    email: 'info@brassoyster.co',
-    phone: '+1 (555) 443-9001',
-    isActive: true,
-    logo: 'https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80'
-  },
-  {
-    id: 'RES-020',
-    name: 'The Brass Oyster',
-    address: 'Pier 4, Harbor Bay',
-    city: 'Seaport, MA 02110',
-    manager: 'A. Fisher',
-    email: 'info@brassoyster.co',
-    phone: '+1 (555) 443-9001',
-    isActive: true,
-    logo: 'https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80'
-  }
-];
+// MOCK data removed, fetching from Redux
 
 const RestaurantsList = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { list: restaurants, loading } = useSelector(state => state.restaurants);
+  
+  const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
+  
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [restaurantToDelete, setRestaurantToDelete] = useState(null);
+  
+  const [errorModalOpen, setErrorModalOpen] = useState(false);
+  const [successModalOpen, setSuccessModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
+
+  useEffect(() => {
+    dispatch(fetchRestaurants({ search, is_active: statusFilter }));
+  }, [dispatch, search, statusFilter]);
+
+  const handleDelete = (row) => {
+    setRestaurantToDelete(row);
+    setDeleteModalOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!restaurantToDelete) return;
+    try {
+      await api.delete(`/restaurants/${restaurantToDelete.id}`);
+      setDeleteModalOpen(false);
+      setRestaurantToDelete(null);
+      setModalMessage('Restaurant supprimé avec succès.');
+      setSuccessModalOpen(true);
+      dispatch(fetchRestaurants({ search, is_active: statusFilter }));
+    } catch (error) {
+      setDeleteModalOpen(false);
+      setModalMessage(error.response?.data?.message || 'Erreur lors de la suppression.');
+      setErrorModalOpen(true);
+    }
+  };
+
+  const getLogoUrl = (logo) => {
+    if (!logo) return null;
+    if (logo.startsWith('http')) return logo;
+    return `${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:8000'}/storage/${logo}`;
+  };
 
   const columns = [
     {
@@ -74,7 +67,7 @@ const RestaurantsList = () => {
       render: (row) => (
         <div className="restaurant-list-name-col">
           {row.logo ? (
-            <img src={row.logo} alt={row.name} className="restaurant-list-logo" />
+            <img src={getLogoUrl(row.logo)} alt={row.name} className="restaurant-list-logo" />
           ) : (
             <div className="restaurant-list-logo-placeholder">
               {row.name.charAt(0)}
@@ -102,19 +95,19 @@ const RestaurantsList = () => {
       accessor: 'contact',
       render: (row) => (
         <div>
-          <div className="restaurant-list-manager">{row.manager}</div>
-          <div className="restaurant-list-email">({row.email})</div>
-          <div className="restaurant-list-phone">{row.phone}</div>
+          <div className="restaurant-list-manager">{row.admin?.name || '—'}</div>
+          <div className="restaurant-list-email">{row.email || '—'}</div>
+          <div className="restaurant-list-phone">{row.phone || '—'}</div>
         </div>
       )
     },
     {
       header: 'Statut',
-      accessor: 'isActive',
+      accessor: 'is_active',
       render: (row) => (
-        <Badge variant="default" style={{ backgroundColor: row.isActive ? '#e0f2fe' : '#f1f5f9', color: row.isActive ? '#0284c7' : '#64748b' }}>
-          <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: row.isActive ? '#0ea5e9' : '#94a3b8', display: 'inline-block', marginRight: '6px' }}></span>
-          {row.isActive ? 'Actif' : 'Inactif'}
+        <Badge variant="default" showDot={false} style={{ backgroundColor: row.is_active ? '#e0f2fe' : '#f1f5f9', color: row.is_active ? '#0284c7' : '#64748b' }}>
+          <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: row.is_active ? '#0ea5e9' : '#94a3b8', display: 'inline-block', marginRight: '6px' }}></span>
+          {row.is_active ? 'Actif' : 'Inactif'}
         </Badge>
       )
     },
@@ -129,7 +122,7 @@ const RestaurantsList = () => {
           <button className="restaurant-list-action-btn" onClick={() => navigate(`/restaurants/edit/${row.id}`)} title="Edit">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
           </button>
-          <button className="restaurant-list-action-btn" title="Delete">
+          <button className="restaurant-list-action-btn" onClick={() => handleDelete(row)} title="Delete">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
           </button>
         </div>
@@ -160,15 +153,21 @@ const RestaurantsList = () => {
         <div style={{ flex: 1, maxWidth: '500px' }}>
           <Input 
             placeholder="Rechercher des restaurants par nom ou emplacement..." 
-            icon={SearchIcon} 
+            icon={SearchIcon}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
           />
         </div>
         <div style={{ display: 'flex', gap: 'var(--spacing-3)' }}>
           <div className="restaurants-filter-select-wrapper">
-            <select className="restaurants-filter-select">
-              <option>Tous les statuts</option>
-              <option>Actif</option>
-              <option>Inactif</option>
+            <select 
+              className="restaurants-filter-select"
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+            >
+              <option value="">Tous les statuts</option>
+              <option value="true">Actif</option>
+              <option value="false">Inactif</option>
             </select>
           </div>
           <Button variant="outline" style={{ padding: 'var(--spacing-2)', borderColor: 'var(--border)' }}>
@@ -188,13 +187,58 @@ const RestaurantsList = () => {
       </div>
 
       <div className="restaurants-table-wrapper">
-        <DataTable 
-          columns={columns} 
-          data={MOCK_RESTAURANTS} 
-          pagination={true}
-          pageSize={5}
-        />
+        {loading ? (
+          <div style={{ padding: 'var(--spacing-4)', textAlign: 'center' }}>Loading restaurants...</div>
+        ) : (
+          <DataTable 
+            columns={columns} 
+            data={restaurants} 
+            pagination={true}
+            pageSize={10}
+          />
+        )}
       </div>
+
+      {/* Delete Confirmation Modal */}
+      <Modal isOpen={deleteModalOpen} onClose={() => setDeleteModalOpen(false)} hideCloseButton={true}>
+        <div style={{ textAlign: 'center', padding: 'var(--spacing-6) var(--spacing-4)' }}>
+          <div style={{ 
+            width: '64px', height: '64px', borderRadius: '50%', 
+            backgroundColor: 'var(--error-bg)', color: 'var(--error-text)', 
+            display: 'flex', alignItems: 'center', justifyContent: 'center', 
+            margin: '0 auto var(--spacing-4)' 
+          }}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+              <line x1="12" y1="9" x2="12" y2="13"></line>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+          </div>
+          <h2 style={{ fontFamily: 'var(--font-family)', fontSize: 'var(--font-xl)', margin: '0 0 var(--spacing-2) 0', color: 'var(--text-primary)' }}>
+            Confirmer la suppression
+          </h2>
+          <p style={{ fontFamily: 'var(--font-family)', fontSize: 'var(--font-sm)', color: 'var(--text-secondary)', marginBottom: 'var(--spacing-6)', lineHeight: '1.5' }}>
+            Êtes-vous sûr de vouloir supprimer le restaurant <strong>"{restaurantToDelete?.name}"</strong> ?<br/>
+            Cette action est irréversible.
+          </p>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: 'var(--spacing-4)' }}>
+            <Button variant="outline" onClick={() => setDeleteModalOpen(false)}>Annuler</Button>
+            <Button variant="primary" style={{ backgroundColor: 'var(--error-text)' }} onClick={confirmDelete}>Supprimer</Button>
+          </div>
+        </div>
+      </Modal>
+
+      <SuccessModal 
+        isOpen={successModalOpen} 
+        onClose={() => setSuccessModalOpen(false)} 
+        message={modalMessage} 
+      />
+      
+      <ErrorModal 
+        isOpen={errorModalOpen} 
+        onClose={() => setErrorModalOpen(false)} 
+        message={modalMessage} 
+      />
     </div>
   );
 };

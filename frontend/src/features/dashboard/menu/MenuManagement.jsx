@@ -1,75 +1,53 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchCategories } from '../../../store/slices/categoriesSlice';
+import { fetchDishes, deleteDish } from '../../../store/slices/dishesSlice';
 import Tabs from '../../../components/ui/Tabs';
 import Input from '../../../components/ui/Input';
 import Button from '../../../components/ui/Button';
-import Alert from '../../../components/ui/Alert';
 import Modal from '../../../components/ui/Modal';
 import Badge from '../../../components/ui/Badge';
+import SuccessModal from '../../../components/ui/SuccessModal';
+import ErrorModal from '../../../components/ui/ErrorModal';
 import DishCard from './components/DishCard';
 import './MenuManagement.css';
 
-const MOCK_DISHES = [
-  {
-    id: 1,
-    name: 'Entrecôte Grillée',
-    price: 24.00,
-    description: 'Pièce de bœuf tendre, servie avec frites maison...',
-    image: 'https://images.unsplash.com/photo-1546833998-877b37c2e5c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60',
-    isActive: true,
-    categoryId: 'principaux'
-  },
-  {
-    id: 2,
-    name: 'Filet de Saumon',
-    price: 22.50,
-    description: 'Saumon frais rôti aux herbes, accompagné...',
-    image: 'https://images.unsplash.com/photo-1485921325833-c519f76c4927?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60',
-    isActive: true,
-    categoryId: 'principaux'
-  },
-  {
-    id: 3,
-    name: 'Risotto aux Truffes',
-    price: 19.00,
-    description: 'Riz arborio crémeux, éclats de truffe noire et...',
-    image: 'https://images.unsplash.com/photo-1633337474564-1d8219eb9601?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60',
-    isActive: false,
-    categoryId: 'principaux'
-  },
-  {
-    id: 4,
-    name: 'Pizza Margherita',
-    price: 14.00,
-    description: 'Sauce tomate San Marzano, mozzarella di...',
-    image: 'https://images.unsplash.com/photo-1604068549290-dea0e4a305ca?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60',
-    isActive: true,
-    categoryId: 'principaux'
-  }
-];
-
-const CATEGORIES = [
-  { id: 'principaux', label: 'Plats Principaux', icon: <span style={{marginRight: '8px'}}>🍴</span> },
-  { id: 'entrees', label: 'Entrées', icon: <span style={{marginRight: '8px'}}>🥗</span> },
-  { id: 'desserts', label: 'Desserts', icon: <span style={{marginRight: '8px'}}>🍰</span> },
-  { id: 'boissons', label: 'Boissons', icon: <span style={{marginRight: '8px'}}>🍷</span> },
-  { id: 'cafe', label: 'Café & Thé', icon: <span style={{marginRight: '8px'}}>☕</span> }
-];
+// MOCK data removed since we are fetching from Redux
 
 const MenuManagement = () => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('principaux');
+  const dispatch = useDispatch();
+  const [activeTab, setActiveTab] = useState(null);
   const [search, setSearch] = useState('');
   
-  const [alert, setAlert] = useState(null);
+  const [errorModalOpen, setErrorModalOpen] = useState(false);
+  const [successModalOpen, setSuccessModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
+  
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [dishToDelete, setDishToDelete] = useState(null);
   const [viewModalOpen, setViewModalOpen] = useState(false);
+  const [dishToView, setDishToView] = useState(null);
+
+  const { list: categories } = useSelector(state => state.categories);
+  const { list: dishes, loading: dishLoading } = useSelector(state => state.dishes);
+  const { user } = useSelector(state => state.auth);
+
+  useEffect(() => {
+    if (user?.restaurant_id) {
+      dispatch(fetchCategories(user.restaurant_id));
+      dispatch(fetchDishes({ restaurant_id: user.restaurant_id, per_page: 500 }));
+    }
+  }, [dispatch, user]);
+
+  const currentTab = activeTab ?? categories[0]?.id ?? null;
 
   // Pagination
   const PAGE_SIZE = 6;
   const [currentPage, setCurrentPage] = useState(1);
 
-  const filteredDishes = MOCK_DISHES.filter(d => d.categoryId === activeTab && (
+  const filteredDishes = dishes.filter(d => d.category_id === currentTab && (
     search === '' || d.name.toLowerCase().includes(search.toLowerCase())
   ));
   const totalItems = filteredDishes.length;
@@ -77,14 +55,32 @@ const MenuManagement = () => {
   const pagedDishes = filteredDishes.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
   const handleEdit = (dish) => {
-    navigate('/menu/edit/1');
+    navigate(`/menu/edit/${dish.id}`);
   };
 
   const handleDelete = (dish) => {
+    setDishToDelete(dish);
     setDeleteModalOpen(true);
   };
 
+  const confirmDelete = async () => {
+    if (!dishToDelete) return;
+
+    const result = await dispatch(deleteDish(dishToDelete.id));
+    setDeleteModalOpen(false);
+    setDishToDelete(null);
+    if (deleteDish.fulfilled.match(result)) {
+      setModalMessage('L\'opération a été effectuée avec succès.');
+      setSuccessModalOpen(true);
+    } else {
+      const msg = typeof result.payload === 'string' ? result.payload : 'Une erreur est survenue.';
+      setModalMessage(msg);
+      setErrorModalOpen(true);
+    }
+  };
+
   const handleView = (dish) => {
+    setDishToView(dish);
     setViewModalOpen(true);
   };
 
@@ -116,12 +112,6 @@ const MenuManagement = () => {
         </Button>
       </div>
 
-      {alert && (
-        <Alert type={alert.type} title={alert.title} className="menu-alert-floating">
-          {alert.message}
-        </Alert>
-      )}
-
       <div className="menu-search-bar">
         <Input 
           placeholder="Rechercher un plat..." 
@@ -132,19 +122,22 @@ const MenuManagement = () => {
       </div>
 
       <div className="menu-tabs-container">
-        <Tabs 
-          tabs={CATEGORIES} 
-          activeTab={activeTab} 
-          onChange={handleTabChange} 
-        />
+        {categories.length > 0 && (
+          <Tabs 
+            tabs={categories.map(c => ({ id: c.id, label: c.name, icon: <span style={{marginRight: '8px'}}>{c.icon || '🍴'}</span> }))} 
+            activeTab={currentTab} 
+            onChange={handleTabChange} 
+          />
+        )}
       </div>
 
       <div className="menu-grid">
-        {pagedDishes.map(dish => (
+        {dishLoading && <div style={{ padding: 'var(--spacing-4)' }}>Loading dishes...</div>}
+        {!dishLoading && pagedDishes.map(dish => (
           <DishCard 
             key={dish.id} 
             dish={dish} 
-            onEdit={handleEdit}
+            onEdit={() => handleEdit(dish)}
             onView={() => handleView(dish)}
             onDelete={() => handleDelete(dish)}
           />
@@ -200,61 +193,80 @@ const MenuManagement = () => {
             Confirmer la suppression
           </h2>
           <p style={{ fontFamily: 'var(--font-family)', fontSize: 'var(--font-sm)', color: 'var(--text-secondary)', marginBottom: 'var(--spacing-6)', lineHeight: '1.5' }}>
-            Êtes-vous sûr de vouloir supprimer le plat <strong>"Faux-filet Maturé"</strong> ?<br/>
+            Êtes-vous sûr de vouloir supprimer le plat <strong>"{dishToDelete?.name}"</strong> ?<br/>
             Cette action est irréversible.
           </p>
           <div style={{ display: 'flex', justifyContent: 'center', gap: 'var(--spacing-4)' }}>
             <Button variant="outline" onClick={() => setDeleteModalOpen(false)}>Annuler</Button>
-            <Button variant="primary" style={{ backgroundColor: 'var(--error-text)' }} onClick={() => setDeleteModalOpen(false)}>Supprimer</Button>
+            <Button variant="primary" style={{ backgroundColor: 'var(--error-text)' }} onClick={confirmDelete} disabled={dishLoading}>
+              {dishLoading ? 'Suppression...' : 'Supprimer'}
+            </Button>
           </div>
         </div>
       </Modal>
 
       {/* View Dish Modal */}
       <Modal isOpen={viewModalOpen} onClose={() => setViewModalOpen(false)} className="menu-view-modal">
-        <div style={{ position: 'relative' }}>
-          <img src="https://images.unsplash.com/photo-1546833998-877b37c2e5c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Dish" style={{ width: '100%', height: '300px', objectFit: 'cover', display: 'block' }} />
-          <div style={{ position: 'absolute', bottom: 'var(--spacing-4)', left: 'var(--spacing-4)' }}>
-            <Badge variant="default" style={{ backgroundColor: 'white' }}>PLATS PRINCIPAUX</Badge>
-          </div>
-        </div>
-        <div style={{ padding: 'var(--spacing-6)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 'var(--spacing-2)' }}>
-            <h2 style={{ fontFamily: 'var(--font-family)', fontSize: 'var(--font-2xl)', fontWeight: 'bold', margin: 0, color: 'var(--text-primary)' }}>
-              Faux-filet Maturé
-            </h2>
-            <div style={{ fontFamily: 'var(--font-family)', fontSize: 'var(--font-xl)', fontWeight: 'bold', color: 'var(--primary)' }}>
-              48.00 €
+        {dishToView && (
+          <>
+            <div style={{ position: 'relative' }}>
+              <img src={dishToView.image_url || dishToView.image || 'https://via.placeholder.com/800x300?text=No+Image'} alt="Dish" style={{ width: '100%', height: '300px', objectFit: 'cover', display: 'block' }} />
+              <div style={{ position: 'absolute', bottom: 'var(--spacing-4)', left: 'var(--spacing-4)' }}>
+                <Badge variant="default" style={{ backgroundColor: 'white' }}>{categories.find(c => c.id === dishToView.category_id)?.name || 'PLAT'}</Badge>
+              </div>
             </div>
-          </div>
-          
-          <div style={{ marginBottom: 'var(--spacing-4)' }}>
-            <Badge variant="default">
-               <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--error-text)', display: 'inline-block', marginRight: '4px' }}></span>
-               Disponible
-            </Badge>
-          </div>
+            <div style={{ padding: 'var(--spacing-6)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 'var(--spacing-2)' }}>
+                <h2 style={{ fontFamily: 'var(--font-family)', fontSize: 'var(--font-2xl)', fontWeight: 'bold', margin: 0, color: 'var(--text-primary)' }}>
+                  {dishToView.name}
+                </h2>
+                <div style={{ fontFamily: 'var(--font-family)', fontSize: 'var(--font-xl)', fontWeight: 'bold', color: 'var(--primary)' }}>
+                  {Number(dishToView.price).toFixed(2)} €
+                </div>
+              </div>
+              
+              <div style={{ marginBottom: 'var(--spacing-4)' }}>
+                <Badge variant={dishToView.is_active ? 'success' : 'default'} showDot={false} style={!dishToView.is_active ? { backgroundColor: '#f1f5f9', color: '#64748b' } : {}}>
+                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: dishToView.is_active ? 'var(--error-text)' : '#94a3b8', display: 'inline-block', marginRight: '4px' }}></span>
+                  {dishToView.is_active ? 'Disponible' : 'Indisponible'}
+                </Badge>
+              </div>
 
-          <p style={{ fontFamily: 'var(--font-family)', fontSize: 'var(--font-sm)', color: 'var(--text-secondary)', lineHeight: '1.5', marginBottom: 'var(--spacing-8)' }}>
-            Notre faux-filet signature, maturé à sec pendant 45 jours pour une tendreté optimale et une concentration de saveurs intense.
-          </p>
+              <p style={{ fontFamily: 'var(--font-family)', fontSize: 'var(--font-sm)', color: 'var(--text-secondary)', lineHeight: '1.5', marginBottom: 'var(--spacing-8)' }}>
+                {dishToView.description}
+              </p>
 
-          <div style={{ display: 'flex', justifyContent: 'center', gap: 'var(--spacing-4)' }}>
-            <Button variant="outline" onClick={() => { setViewModalOpen(false); navigate('/menu/edit/1'); }}>
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '8px' }}>
-                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-              </svg> Modifier
-            </Button>
-            <Button variant="primary" onClick={() => setViewModalOpen(false)} style={{ backgroundColor: 'var(--error-text)' }}>
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '8px' }}>
-                <polyline points="3 6 5 6 21 6"></polyline>
-                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-              </svg> Supprimer
-            </Button>
-          </div>
-        </div>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: 'var(--spacing-4)' }}>
+                <Button variant="outline" onClick={() => { setViewModalOpen(false); navigate(`/menu/edit/${dishToView.id}`); }}>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '8px' }}>
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                  </svg> Modifier
+                </Button>
+                <Button variant="primary" onClick={() => { setViewModalOpen(false); handleDelete(dishToView); }} style={{ backgroundColor: 'var(--error-text)' }}>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '8px' }}>
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                  </svg> Supprimer
+                </Button>
+              </div>
+            </div>
+          </>
+        )}
       </Modal>
+
+      {/* Success and Error Modals */}
+      <SuccessModal 
+        isOpen={successModalOpen} 
+        onClose={() => setSuccessModalOpen(false)} 
+        message={modalMessage} 
+      />
+      
+      <ErrorModal 
+        isOpen={errorModalOpen} 
+        onClose={() => setErrorModalOpen(false)} 
+        message={modalMessage} 
+      />
     </div>
   );
 };

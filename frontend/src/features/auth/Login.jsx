@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { login, clearError } from '../../store/slices/authSlice';
 import Input from '../../components/ui/Input';
 import Button from '../../components/ui/Button';
 import Card from '../../components/ui/Card';
@@ -8,7 +10,21 @@ import Alert from '../../components/ui/Alert';
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
+  const { isAuthenticated, error, loading, user } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      const from = location.state?.from?.pathname;
+      if (from && from !== '/login') {
+        navigate(from);
+      } else {
+        navigate(user.role === 'super_admin' ? '/dashboard' : '/restaurant-dashboard');
+      }
+    }
+  }, [isAuthenticated, user, navigate, location]);
 
   const MailIcon = (
     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#94a3b8' }}>
@@ -32,17 +48,12 @@ const Login = () => {
     </svg>
   );
 
-  const ErrorActionIcon = (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#ef4444" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="10"></circle>
-      <line x1="12" y1="8" x2="12" y2="12" stroke="white"></line>
-      <line x1="12" y1="16" x2="12.01" y2="16" stroke="white"></line>
-    </svg>
-  );
-
   const handleSubmit = (e) => {
     e.preventDefault();
-    navigate('/restaurant-dashboard');
+    if (email && password) {
+      dispatch(clearError());
+      dispatch(login({ email, password }));
+    }
   };
 
   return (
@@ -59,14 +70,16 @@ const Login = () => {
       <Card style={{ padding: 'var(--spacing-8)', boxShadow: 'var(--shadow-md)' }}>
         
         <div style={{ marginBottom: 'var(--spacing-6)' }}>
-          <Alert 
-            type="error" 
-            title="Invalid credentials"
-            icon={AlertCircleIcon}
-            style={{ backgroundColor: '#fef2f2', border: '1px solid #fee2e2', color: '#b91c1c' }}
-          >
-            <span style={{ color: '#dc2626' }}>Please check your email and password and try again.</span>
-          </Alert>
+          {error && (
+            <Alert 
+              type="error" 
+              title="Login Failed"
+              icon={AlertCircleIcon}
+              style={{ backgroundColor: '#fef2f2', border: '1px solid #fee2e2', color: '#b91c1c' }}
+            >
+              <span style={{ color: '#dc2626' }}>{error}</span>
+            </Alert>
+          )}
         </div>
 
         <form onSubmit={handleSubmit}>
@@ -78,8 +91,6 @@ const Login = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               icon={MailIcon}
-              actionIcon={ErrorActionIcon}
-              error="Please enter a valid email address."
             />
           </div>
 
@@ -97,12 +108,11 @@ const Login = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               icon={LockIcon}
-              error="Incorrect password."
             />
           </div>
 
-          <Button type="submit" fullWidth variant="primary" style={{ backgroundColor: '#b91c1c', borderColor: '#b91c1c', marginBottom: 'var(--spacing-6)' }}>
-            Log in
+          <Button type="submit" fullWidth variant="primary" style={{ backgroundColor: '#b91c1c', borderColor: '#b91c1c', marginBottom: 'var(--spacing-6)' }} disabled={loading}>
+            {loading ? 'Logging in...' : 'Log in'}
           </Button>
 
           <div style={{ textAlign: 'center', fontFamily: 'var(--font-family)', fontSize: 'var(--font-sm)', color: 'var(--text-secondary)' }}>

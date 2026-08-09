@@ -1,7 +1,7 @@
 import { LuLayoutDashboard } from "react-icons/lu";
 import { IoIosSettings, IoMdRestaurant } from "react-icons/io";
 import { FaUsersCog } from "react-icons/fa";
-import { MdOutlineMenuBook, MdOutlineNotificationsNone, MdOutlineShoppingBag } from "react-icons/md";
+import { MdOutlineMenuBook, MdOutlineNotificationsNone, MdOutlineRestaurantMenu } from "react-icons/md";
 
 export const MENU_LIST = {
   SUPER_ADMIN: [
@@ -39,9 +39,9 @@ export const MENU_LIST = {
       icon: <MdOutlineMenuBook />,
     },
     {
-      label: "Commandes",
-      path: "/orders",
-      icon: <MdOutlineShoppingBag />,
+      label: "Plats",
+      path: "/menu/plats",
+      icon: <MdOutlineRestaurantMenu />,
     },
     {
       label: "Notifications",

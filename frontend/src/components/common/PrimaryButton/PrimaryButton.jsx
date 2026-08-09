@@ -1,8 +1,8 @@
 import styles from "./PrimaryButton.module.css"
 
-function PrimaryButton({ icon, content }) {
+function PrimaryButton({ icon, content, onClick, type = 'button', ...rest }) {
   return (
-    <button className={styles.primaryBtn}>
+    <button type={type} className={styles.primaryBtn} onClick={onClick} {...rest}>
       {icon}
       <span className={styles.content}>{content}</span>
     </button>
