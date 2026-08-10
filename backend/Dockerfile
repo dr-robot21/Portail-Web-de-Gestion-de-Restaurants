@@ -66,9 +66,11 @@ COPY docker/nginx.conf /etc/nginx/http.d/default.conf
 COPY docker/supervisord.conf /etc/supervisord.conf
 COPY docker/php.ini /usr/local/etc/php/conf.d/app.ini
 
-# Entrypoint: wait for DB, migrate, symlink storage, then start
+# Entrypoint: start nginx + php-fpm immediately
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
+# Prep: migrate + caches, run in background by supervisord
+COPY docker/prep.sh /usr/local/bin/prep.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh /usr/local/bin/prep.sh
 
 EXPOSE 80
 
