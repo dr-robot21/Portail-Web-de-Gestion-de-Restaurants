@@ -10,12 +10,14 @@ class SuperAdminSeeder extends Seeder
 {
     public function run(): void
     {
-        User::create([
-            'name' => 'Super Admin',
-            'email' => 'admin@restaurant.com',
-            'password' => Hash::make('password123'),
-            'role' => User::ROLE_SUPER_ADMIN,
-            'is_active' => true,
-        ]);
+        User::firstOrCreate(
+            ['email' => 'admin@restaurant.com'],
+            [
+                'name' => 'Super Admin',
+                'password' => Hash::make('password123'),
+                'role' => User::ROLE_SUPER_ADMIN,
+                'is_active' => true,
+            ],
+        );
     }
 }
