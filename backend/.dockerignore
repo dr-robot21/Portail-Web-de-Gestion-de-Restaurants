@@ -14,10 +14,4 @@
 /storage/framework/views
 /tests
 node_modules
-Dockerfile
-.dockerignore
-docker/nginx.conf
-docker/supervisord.conf
-docker/php.ini
-docker/entrypoint.sh
 README.md

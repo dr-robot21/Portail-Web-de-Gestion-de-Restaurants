@@ -156,33 +156,40 @@ All endpoints are prefixed with `/api` and (except auth) require a `Authorizatio
 
 The project is pre-configured for free hosting:
 
-- **API (Laravel)** → [Render](https://render.com) free tier, via Docker
+- **API (Laravel)** → [Railway](https://railway.app), via Docker
 - **Frontend (React SPA)** → [Vercel](https://vercel.com) free tier
 - **Database (MySQL)** → any free MySQL host (Clever Cloud, Aiven, Railway, …)
 
-### 1. Deploy the API to Render
+### 1. Deploy the API to Railway
 
-The backend ships with a `Dockerfile` (nginx + PHP-FPM + supervisor) and a
-`render.yaml` blueprint, so the simplest path is the **Blueprint**:
+The backend ships with a `Dockerfile` (nginx + PHP-FPM + supervisor), a
+`railway.json` and an entrypoint that listens on `$PORT`, runs migrations and
+creates the storage symlink automatically.
 
 1. Push the repo to GitHub.
-2. In Render: **New → Blueprint** and select the repo.
-3. Set the `sync: false` env vars (Render will ask you to fill them):
+2. In Railway: **New Project → Deploy from GitHub repo** and pick the repo.
+3. Create a service from the repo, then set its **Root Directory** to `backend`
+   (Railway finds `railway.json` + `Dockerfile` there).
+4. Add these variables in **Service → Variables**:
+   - `APP_ENV=production`
+   - `APP_DEBUG=false`
+   - `APP_URL` → your Railway URL (set it after you generate a domain)
    - `FRONTEND_URL` → your Vercel frontend URL, e.g. `https://my-app.vercel.app`
    - `APP_KEY` → generate with `php artisan key:generate`
    - `JWT_SECRET` → generate with `php artisan jwt:secret`
-   - `DB_HOST` / `DB_DATABASE` / `DB_USERNAME` / `DB_PASSWORD` → your free MySQL host
-4. Deploy. The entrypoint automatically runs `php artisan migrate --force` and
-   `php artisan storage:link` on startup. The health check hits `/up`.
+   - `DB_CONNECTION=mysql`
+   - `DB_HOST` / `DB_PORT` / `DB_DATABASE` / `DB_USERNAME` / `DB_PASSWORD` → your MySQL host
+5. In **Settings → Networking**, click **Generate Domain** to get
+   `https://your-app.up.railway.app`.
 
-> **Manual alternative:** In Render, create a **Web Service** → pick Docker as
-> runtime → Root Directory `backend` → deploy. Then set the env vars above.
+> Railway detects the Dockerfile and runs it with `backend/` as the build
+> context. The health check (`/up`) is defined in `railway.json`.
 
 **Environment variables** (see `backend/.env.production.example`):
 
 | Variable | Purpose |
 | -------- | ------- |
-| `APP_URL` | Your Render URL (used to build storage URLs) |
+| `APP_URL` | Your Railway URL (used to build storage URLs) |
 | `FRONTEND_URL` | Vercel frontend origin (used by CORS) |
 | `CORS_ALLOWED_ORIGINS` | Comma-separated extra allowed origins (optional) |
 | `APP_KEY`, `JWT_SECRET` | App + JWT signing secrets |
@@ -199,7 +206,7 @@ The backend ships with a `Dockerfile` (nginx + PHP-FPM + supervisor) and a
 1. Push the repo to GitHub.
 2. In Vercel: **New Project** → import the repo → **Root Directory**: `frontend`.
 3. Vercel auto-detects Vite. Add one environment variable:
-   - `VITE_API_URL` → `https://your-api.onrender.com/api`
+   - `VITE_API_URL` → `https://your-app.up.railway.app/api`
 4. Deploy. `vercel.json` already rewrites all routes to `index.html` for SPA
    routing.
 
@@ -208,7 +215,7 @@ The backend ships with a `Dockerfile` (nginx + PHP-FPM + supervisor) and a
 
 ### 3. Seed the database (once)
 
-Render runs `php artisan migrate` automatically, but seeding is manual. From a
+Railway runs `php artisan migrate` automatically, but seeding is manual. From a
 local machine with the `.env` pointed at your production MySQL:
 
 ```bash

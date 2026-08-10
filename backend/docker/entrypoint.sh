@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-# Render injects $PORT (e.g. 10000). Substitute it into nginx.conf so the
+# Railway/Render inject $PORT (e.g. 10000). Substitute it into nginx.conf so the
 # public web server binds to the right port. Default to 80 for plain Docker.
 if [ -n "${PORT}" ]; then
     sed -i "s/listen 80;/listen ${PORT};/" /etc/nginx/http.d/default.conf
