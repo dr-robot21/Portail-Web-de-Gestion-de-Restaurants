@@ -10,7 +10,7 @@ RUN composer install --no-dev --no-scripts --no-interaction --prefer-dist --opti
 # ─────────────────────────────────────────────────────────────
 # Stage 2: Runtime (php-fpm + nginx)
 # ─────────────────────────────────────────────────────────────
-FROM php:8.3-fpm-alpine AS runtime
+FROM php:8.4-fpm-alpine AS runtime
 
 # PHP extensions required by Laravel
 RUN apk add --no-cache \
