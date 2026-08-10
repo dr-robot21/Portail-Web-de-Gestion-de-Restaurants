@@ -205,8 +205,18 @@
 
 .restaurant-form-manager-toolbar {
   display: flex;
+  align-items: center;
   gap: var(--spacing-4);
   margin-bottom: var(--spacing-4);
+}
+
+.restaurant-form-manager-toolbar .ui-input-container {
+  margin-bottom: 0;
+}
+
+.restaurant-form-manager-toolbar .ui-button {
+  height: 42px;
+  white-space: nowrap;
 }
 
 .restaurant-form-manager-list {

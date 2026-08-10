@@ -30,7 +30,7 @@ function Sidebar() {
             </div>
             <div className={styles.userInfos}>
               <h2 className={styles.userName}>{user?.name || 'Utilisateur'}</h2>
-              <p className={styles.userRole}>{role === 'super_admin' ? 'Super admin' : 'Admin Restaurant'}</p>
+              <p className={styles.userRole}>{role === 'super_admin' ? 'Super admin' : 'Administrateur Restaurant'}</p>
             </div>
           </div>
         </div>
@@ -79,7 +79,7 @@ function Sidebar() {
         <div className={styles.sidebarFooter}>
           <NavLink to="/help" className={styles.navLink}>
             <IoMdHelpCircleOutline />
-            <span className={styles.label}>Help Center</span>
+            <span className={styles.label}>Centre d'aide</span>
           </NavLink>
 
           <button className={styles.logout} onClick={handleLogout}>

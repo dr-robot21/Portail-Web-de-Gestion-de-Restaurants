@@ -5,6 +5,7 @@ import { fetchUserById, createUser, updateUser } from '../../../store/slices/use
 import Card from '../../../components/ui/Card';
 import Input from '../../../components/ui/Input';
 import Button from '../../../components/ui/Button';
+import Loader from '../../../components/ui/Loader';
 import Switch from '../../../components/ui/Switch';
 import SuccessModal from '../../../components/ui/SuccessModal';
 import ErrorModal from '../../../components/ui/ErrorModal';
@@ -138,8 +139,9 @@ const UserForm = () => {
       <div className="user-form-header">
         <h1 className="user-form-title">{isEdit ? 'Modifier un Utilisateur' : 'Ajouter un Utilisateur'}</h1>
         <div className="user-form-header-actions">
-          <Button variant="outline" onClick={() => navigate('/users')}>Annuler</Button>
+          <Button variant="outline" onClick={() => navigate('/users')} disabled={loading}>Annuler</Button>
           <Button variant="primary" style={{ backgroundColor: 'var(--error-text)', borderColor: 'var(--error-text)' }} onClick={handleSubmit} disabled={loading}>
+            {loading && <Loader size="sm" color="#ffffff" />}
             {loading ? 'Enregistrement...' : (isEdit ? 'Enregistrer' : "Créer l'utilisateur")}
           </Button>
         </div>
@@ -172,7 +174,7 @@ const UserForm = () => {
               <select name="role" value={formData.role} onChange={handleChange} className="user-form-select">
                 <option value="">Sélectionner un rôle</option>
                 <option value="super_admin">Super Admin</option>
-                <option value="restaurant_admin">Admin Restaurant</option>
+                <option value="restaurant_admin">Administrateur Restaurant</option>
               </select>
             </div>
             <div className="user-form-info-box">

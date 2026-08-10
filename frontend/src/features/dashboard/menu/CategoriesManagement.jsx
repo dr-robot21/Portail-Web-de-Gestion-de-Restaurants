@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchCategories, addCategory, deleteCategory } from '../../../store/slices/categoriesSlice';
 import Button from '../../../components/ui/Button';
+import Loader from '../../../components/ui/Loader';
 import Tabs from '../../../components/ui/Tabs';
 import DataTable from '../../../components/ui/DataTable';
 import Modal from '../../../components/ui/Modal';
@@ -11,7 +12,7 @@ import ErrorModal from '../../../components/ui/ErrorModal';
 import './CategoriesManagement.css';
 
 const FILTER_TABS = [
-  { id: 'all', label: 'All' }
+  { id: 'all', label: 'Tous' }
 ];
 
 const CategoriesManagement = () => {
@@ -76,7 +77,7 @@ const CategoriesManagement = () => {
 
   const columns = [
     { 
-      header: 'CATEGORY NAME', 
+      header: 'NOM DE LA CATÉGORIE', 
       accessor: 'name',
       render: (row) => (
         <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-3)' }}>
@@ -160,8 +161,9 @@ const CategoriesManagement = () => {
         </div>
 
         <div className="categories-modal-actions">
-          <Button variant="outline" onClick={() => setAddModalOpen(false)}>Annuler</Button>
+          <Button variant="outline" onClick={() => setAddModalOpen(false)} disabled={loading}>Annuler</Button>
           <Button variant="primary" onClick={handleAddSubmit} disabled={loading}>
+            {loading && <Loader size="sm" color="#ffffff" />}
             {loading ? 'Enregistrement...' : 'Enregistrer'}
           </Button>
         </div>
@@ -190,8 +192,9 @@ const CategoriesManagement = () => {
             Les plats associés devront être réassignés.
           </p>
           <div style={{ display: 'flex', justifyContent: 'center', gap: 'var(--spacing-4)' }}>
-            <Button variant="outline" onClick={() => setDeleteModalOpen(false)}>Annuler</Button>
+            <Button variant="outline" onClick={() => setDeleteModalOpen(false)} disabled={loading}>Annuler</Button>
             <Button variant="primary" style={{ backgroundColor: 'var(--error-text)' }} onClick={confirmDelete} disabled={loading}>
+              {loading && <Loader size="sm" color="#ffffff" />}
               {loading ? 'Suppression...' : 'Supprimer'}
             </Button>
           </div>

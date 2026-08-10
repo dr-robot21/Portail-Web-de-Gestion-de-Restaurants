@@ -87,7 +87,7 @@ const RestaurantAdminDashboard = () => {
       <div className="restaurant-dashboard-top-metrics">
         <Card className="metric-card">
           <div className="metric-header">
-            <span className="metric-label">STATUS DU MENU</span>
+            <span className="metric-label">STATUT DU MENU</span>
             <span style={{ color: 'var(--error-text)' }}>{CutleryIcon}</span>
           </div>
           <div className="metric-value-row">

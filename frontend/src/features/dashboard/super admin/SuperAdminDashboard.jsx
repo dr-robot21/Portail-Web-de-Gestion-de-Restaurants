@@ -205,7 +205,7 @@ const SuperAdminDashboard = () => {
                       <div className="sad-staff-avatar">{UserIcon}</div>
                       <div className="sad-staff-info">
                         <div className="sad-staff-name">{u.name}</div>
-                        <div className="sad-staff-role">{u.role === 'super_admin' ? 'Super Admin' : 'Admin Restaurant'}</div>
+                        <div className="sad-staff-role">{u.role === 'super_admin' ? 'Super Admin' : 'Administrateur Restaurant'}</div>
                       </div>
                       <div className={`sad-status-dot sad-status-dot--${u.is_active ? 'online' : 'away'}`} />
                     </div>

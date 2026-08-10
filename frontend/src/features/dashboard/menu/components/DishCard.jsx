@@ -32,7 +32,7 @@ const DishCard = ({ dish, onEdit, onView, onDelete }) => {
         <img src={dishImage} alt={name} className="dish-card-image" />
         <div className="dish-card-status">
           <Badge variant={is_active ? 'success' : 'default'}>
-            {is_active ? 'Active' : 'Inactive'}
+            {is_active ? 'Actif' : 'Inactif'}
           </Badge>
         </div>
       </div>
@@ -47,14 +47,14 @@ const DishCard = ({ dish, onEdit, onView, onDelete }) => {
         
         <div className="dish-card-actions">
           <div className="dish-card-actions-left">
-            <button className="dish-card-action-btn" onClick={() => onEdit(dish)} title="Edit">
+            <button className="dish-card-action-btn" onClick={() => onEdit(dish)} title="Modifier">
               {EditIcon}
             </button>
-            <button className="dish-card-action-btn" onClick={() => onView(dish)} title="View">
+            <button className="dish-card-action-btn" onClick={() => onView(dish)} title="Voir">
               {ViewIcon}
             </button>
           </div>
-          <button className="dish-card-action-btn dish-card-action-btn--delete" onClick={() => onDelete(dish)} title="Delete">
+          <button className="dish-card-action-btn dish-card-action-btn--delete" onClick={() => onDelete(dish)} title="Supprimer">
             {DeleteIcon}
           </button>
         </div>

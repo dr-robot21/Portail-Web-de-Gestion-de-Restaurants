@@ -31,6 +31,19 @@
   margin-bottom: var(--spacing-6);
 }
 
+.users-toolbar .ui-input-container {
+  margin-bottom: 0;
+}
+
+.users-toolbar .ui-input-wrapper,
+.users-filter-select-wrapper {
+  height: 42px;
+}
+
+.users-toolbar .ui-input {
+  height: 100%;
+}
+
 .users-filter-select-wrapper {
   background-color: transparent;
   border: 1px solid var(--border);
@@ -43,9 +56,10 @@
 .users-filter-select {
   border: none;
   background: transparent;
-  padding: var(--spacing-2) 0;
+  padding: var(--spacing-3) var(--spacing-3);
   font-family: var(--font-family);
-  font-size: var(--font-sm);
+  font-size: var(--font-md);
+  line-height: 1;
   color: var(--text-primary);
   outline: none;
   cursor: pointer;

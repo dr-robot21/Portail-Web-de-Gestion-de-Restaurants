@@ -6,6 +6,7 @@ import api from '../../../services/api';
 import Card from '../../../components/ui/Card';
 import Input from '../../../components/ui/Input';
 import Button from '../../../components/ui/Button';
+import Loader from '../../../components/ui/Loader';
 import SuccessModal from '../../../components/ui/SuccessModal';
 import ErrorModal from '../../../components/ui/ErrorModal';
 import './RestaurantForm.css';
@@ -17,6 +18,7 @@ const RestaurantForm = () => {
   const dispatch = useDispatch();
 
   const [selectedManager, setSelectedManager] = useState(null);
+  const [managerSearch, setManagerSearch] = useState('');
   const [formData, setFormData] = useState({
     name: '',
     cuisine_type: '',
@@ -33,6 +35,16 @@ const RestaurantForm = () => {
   const [loading, setLoading] = useState(false);
 
   const { list: users, loading: usersLoading } = useSelector(state => state.users);
+
+  const filteredManagers = users.filter(u => {
+    const q = managerSearch.trim().toLowerCase();
+    if (!q) return true;
+    return (
+      u.name?.toLowerCase().includes(q) ||
+      u.email?.toLowerCase().includes(q) ||
+      String(u.id).includes(q)
+    );
+  });
 
   const [successModalOpen, setSuccessModalOpen] = useState(false);
   const [errorModalOpen, setErrorModalOpen] = useState(false);
@@ -332,16 +344,26 @@ const RestaurantForm = () => {
         
         <div className="restaurant-form-manager-toolbar">
           <div style={{ flex: 1 }}>
-            <Input placeholder="Rechercher par nom, email ou ID..." icon={SearchIcon} />
+            <Input
+              placeholder="Rechercher par nom, email ou ID..."
+              icon={SearchIcon}
+              value={managerSearch}
+              onChange={(e) => setManagerSearch(e.target.value)}
+            />
           </div>
-          <Button variant="primary" style={{ backgroundColor: 'var(--error-text)', borderColor: 'var(--error-text)' }}>
+          <Button variant="primary" style={{ backgroundColor: 'var(--error-text)', borderColor: 'var(--error-text)' }} onClick={() => navigate('/users/add')}>
             {AddUserIcon} Nouveau Gérant
           </Button>
         </div>
 
         <div className="restaurant-form-manager-list">
           {usersLoading && <div>Chargement des utilisateurs...</div>}
-          {users.map(u => (
+          {!usersLoading && managerSearch && filteredManagers.length === 0 && (
+            <div style={{ fontFamily: 'var(--font-family)', fontSize: 'var(--font-sm)', color: 'var(--text-secondary)', padding: 'var(--spacing-3) 0' }}>
+              Aucun gérant trouvé pour « {managerSearch} ».
+            </div>
+          )}
+          {filteredManagers.map(u => (
             <div key={u.id} className={`restaurant-form-manager-item ${selectedManager === u.id ? 'restaurant-form-manager-item--selected' : ''}`}>
               <div className="restaurant-form-manager-avatar" style={{ position: 'relative', backgroundColor: '#e0f2fe', color: '#0284c7' }}>
                 {u.avatar_url || u.avatar ? (
@@ -372,8 +394,9 @@ const RestaurantForm = () => {
       </Card>
 
       <div className="restaurant-form-footer">
-        <Button variant="outline" onClick={() => navigate('/restaurants')}>Annuler</Button>
+        <Button variant="outline" onClick={() => navigate('/restaurants')} disabled={loading}>Annuler</Button>
         <Button variant="primary" style={{ backgroundColor: 'var(--error-text)', borderColor: 'var(--error-text)' }} onClick={handleSubmit} disabled={loading}>
+          {loading && <Loader size="sm" color="#ffffff" />}
           {loading ? 'Enregistrement...' : 'Enregistrer'}
         </Button>
       </div>

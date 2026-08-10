@@ -83,7 +83,7 @@ const Register = () => {
       <div style={{ marginBottom: 'var(--spacing-6)' }}>
         <Alert 
           type="error" 
-          title="Registration Failed"
+          title="Échec de l'inscription"
           icon={AlertCircleIcon}
           style={{ backgroundColor: '#fef2f2', border: '1px solid #fee2e2', color: '#b91c1c' }}
         >

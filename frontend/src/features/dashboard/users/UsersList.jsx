@@ -13,7 +13,7 @@ import './UsersList.css';
 
 const ROLE_LABEL = {
   super_admin: 'Super Admin',
-  restaurant_admin: 'Admin Restaurant',
+  restaurant_admin: 'Administrateur Restaurant',
 };
 
 const UsersList = () => {
@@ -165,7 +165,7 @@ const UsersList = () => {
             <select className="users-filter-select" value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)}>
               <option value="">Tous les rôles</option>
               <option value="super_admin">Super Admin</option>
-              <option value="restaurant_admin">Admin Restaurant</option>
+              <option value="restaurant_admin">Administrateur Restaurant</option>
             </select>
           </div>
 

@@ -6,6 +6,7 @@ import { fetchCategories } from '../../../store/slices/categoriesSlice';
 import api from '../../../services/api';
 import Input from '../../../components/ui/Input';
 import Button from '../../../components/ui/Button';
+import Loader from '../../../components/ui/Loader';
 import Card from '../../../components/ui/Card';
 import Switch from '../../../components/ui/Switch';
 import Modal from '../../../components/ui/Modal';
@@ -300,8 +301,9 @@ const EditDish = () => {
             <strong>"{formData.name}"</strong> ?
           </p>
           <div style={{ display: 'flex', justifyContent: 'center', gap: 'var(--spacing-4)' }}>
-            <Button variant="outline" onClick={() => setSaveConfirmOpen(false)}>Annuler</Button>
+            <Button variant="outline" onClick={() => setSaveConfirmOpen(false)} disabled={loading}>Annuler</Button>
             <Button variant="primary" onClick={handleSave} disabled={loading}>
+              {loading && <Loader size="sm" color="#ffffff" />}
               {loading ? 'Enregistrement...' : 'Enregistrer'}
             </Button>
           </div>
@@ -325,8 +327,9 @@ const EditDish = () => {
             Cette action est irréversible.
           </p>
           <div style={{ display: 'flex', justifyContent: 'center', gap: 'var(--spacing-4)' }}>
-            <Button variant="outline" onClick={() => setDeleteConfirmOpen(false)}>Annuler</Button>
+            <Button variant="outline" onClick={() => setDeleteConfirmOpen(false)} disabled={loading}>Annuler</Button>
             <Button variant="primary" style={{ backgroundColor: 'var(--error-text)' }} onClick={handleDelete} disabled={loading}>
+              {loading && <Loader size="sm" color="#ffffff" />}
               {loading ? 'Suppression...' : 'Supprimer'}
             </Button>
           </div>

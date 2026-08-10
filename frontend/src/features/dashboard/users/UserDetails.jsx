@@ -13,7 +13,7 @@ import './UserDetails.css';
 
 const ROLE_LABEL = {
   super_admin: 'Super Admin',
-  restaurant_admin: 'Admin Restaurant',
+  restaurant_admin: 'Administrateur Restaurant',
 };
 
 const UserDetails = () => {
@@ -188,7 +188,12 @@ const UserDetails = () => {
                 </h2>
               </div>
               <div className="user-details-establishment-list">
-                <div className="user-details-establishment-item">
+                <button
+                  type="button"
+                  className="user-details-establishment-item"
+                  onClick={() => navigate(`/restaurants/${user.restaurant.id}`)}
+                  style={{ width: '100%', textAlign: 'left', font: 'inherit' }}
+                >
                   <div className="user-details-establishment-icon">{CutleryIcon}</div>
                   <div className="user-details-establishment-info">
                     <div className="user-details-establishment-name">{user.restaurant.name}</div>
@@ -197,7 +202,7 @@ const UserDetails = () => {
                   <div className="user-details-establishment-arrow">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                   </div>
-                </div>
+                </button>
               </div>
             </Card>
           )}

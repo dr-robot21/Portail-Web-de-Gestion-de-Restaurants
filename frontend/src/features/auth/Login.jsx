@@ -60,10 +60,10 @@ const Login = () => {
     <div style={{ width: '100%', maxWidth: '440px', margin: '0 auto' }}>
       <div style={{ textAlign: 'center', marginBottom: 'var(--spacing-6)' }}>
         <h1 style={{ fontFamily: 'var(--font-family)', fontSize: 'var(--font-2xl)', fontWeight: 'var(--weight-bold)', color: 'var(--text-primary)', margin: '0 0 var(--spacing-2) 0' }}>
-          Dashboard Admin Login
+          Connexion Administrateur
         </h1>
         <p style={{ fontFamily: 'var(--font-family)', fontSize: 'var(--font-sm)', color: 'var(--text-secondary)', margin: 0 }}>
-          Sign in to access the management console
+          Connectez-vous pour accéder à la console de gestion
         </p>
       </div>
 
@@ -73,7 +73,7 @@ const Login = () => {
           {error && (
             <Alert 
               type="error" 
-              title="Login Failed"
+              title="Échec de la connexion"
               icon={AlertCircleIcon}
               style={{ backgroundColor: '#fef2f2', border: '1px solid #fee2e2', color: '#b91c1c' }}
             >
@@ -85,7 +85,7 @@ const Login = () => {
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: 'var(--spacing-5)' }}>
             <Input
-              label="Email address *"
+              label="Adresse email *"
               type="email"
               placeholder="admin@restaurant.com"
               value={email}
@@ -102,7 +102,7 @@ const Login = () => {
               </Link>
             </div>
             <Input
-              label="Password *"
+              label="Mot de passe *"
               type="password"
               placeholder="••••••••"
               value={password}
@@ -112,11 +112,11 @@ const Login = () => {
           </div>
 
           <Button type="submit" fullWidth variant="primary" style={{ backgroundColor: '#b91c1c', borderColor: '#b91c1c', marginBottom: 'var(--spacing-6)' }} disabled={loading}>
-            {loading ? 'Logging in...' : 'Log in'}
+            {loading ? 'Connexion en cours...' : 'Se connecter'}
           </Button>
 
           <div style={{ textAlign: 'center', fontFamily: 'var(--font-family)', fontSize: 'var(--font-sm)', color: 'var(--text-secondary)' }}>
-            Don't have an account? <Link to="/register" style={{ color: '#475569', fontWeight: 'var(--weight-bold)', textDecoration: 'none' }}>Register</Link>
+            Pas de compte ? <Link to="/register" style={{ color: '#475569', fontWeight: 'var(--weight-bold)', textDecoration: 'none' }}>S'inscrire</Link>
           </div>
         </form>
       </Card>

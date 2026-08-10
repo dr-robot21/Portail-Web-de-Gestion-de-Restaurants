@@ -44,7 +44,7 @@ const ForgotPassword = () => {
         variant="primary" 
         style={{ backgroundColor: '#c53030', borderColor: '#c53030', marginBottom: 'var(--spacing-6)', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
       >
-        {RefreshIcon} RESEND EMAIL
+        {RefreshIcon} RENVOYER L'EMAIL
       </Button>
 
       <div style={{ display: 'flex', justifyContent: 'center' }}>
@@ -57,7 +57,7 @@ const ForgotPassword = () => {
           To keep it clean, I'll place it outside the regular document flow, or just style it with a negative margin hack.
       */}
       <div style={{ position: 'absolute', bottom: '-40px', left: 0, right: 0, textAlign: 'center', fontFamily: 'var(--font-family)', fontSize: '12px', color: '#94a3b8' }}>
-        Having trouble? <Link to="/support" style={{ color: '#b91c1c', fontWeight: 'var(--weight-bold)', textDecoration: 'none' }}>Contact Support</Link>
+        Un problème ? <Link to="/support" style={{ color: '#b91c1c', fontWeight: 'var(--weight-bold)', textDecoration: 'none' }}>Contacter le support</Link>
       </div>
     </div>
   );

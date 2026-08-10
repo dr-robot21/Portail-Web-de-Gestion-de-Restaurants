@@ -82,6 +82,7 @@
   padding: var(--spacing-3) var(--spacing-4);
   font-family: var(--font-family);
   font-size: var(--font-md);
+  line-height: 1;
   color: var(--text-primary);
   outline: none;
 }

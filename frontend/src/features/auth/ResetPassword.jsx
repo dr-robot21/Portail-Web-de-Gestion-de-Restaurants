@@ -83,7 +83,7 @@ const ResetPassword = () => {
         <div style={{ marginBottom: 'var(--spacing-4)' }}>
           <Input
             type={showPassword ? "text" : "password"}
-            placeholder="New Password"
+            placeholder="Nouveau mot de passe"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             icon={KeyIcon}
@@ -95,7 +95,7 @@ const ResetPassword = () => {
         <div style={{ marginBottom: 'var(--spacing-4)' }}>
           <Input
             type={showConfirmPassword ? "text" : "password"}
-            placeholder="Confirm New Password"
+            placeholder="Confirmer le nouveau mot de passe"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             icon={LockIcon}
@@ -105,11 +105,11 @@ const ResetPassword = () => {
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', color: '#64748b', fontSize: '11px', fontFamily: 'var(--font-family)', marginBottom: 'var(--spacing-6)' }}>
-          {InfoIcon} At least 8 characters, including a number and a symbol.
+          {InfoIcon} Au moins 8 caractères, dont un chiffre et un symbole.
         </div>
 
         <Button type="submit" fullWidth variant="primary" style={{ backgroundColor: '#c53030', borderColor: '#c53030', marginBottom: 'var(--spacing-6)' }}>
-          Reset Password
+          Réinitialiser le mot de passe
         </Button>
       </form>
 

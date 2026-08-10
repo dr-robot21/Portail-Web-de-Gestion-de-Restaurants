@@ -5,6 +5,7 @@ import { addDish } from '../../../store/slices/dishesSlice';
 import { fetchCategories } from '../../../store/slices/categoriesSlice';
 import Input from '../../../components/ui/Input';
 import Button from '../../../components/ui/Button';
+import Loader from '../../../components/ui/Loader';
 import Card from '../../../components/ui/Card';
 import Switch from '../../../components/ui/Switch';
 import SuccessModal from '../../../components/ui/SuccessModal';
@@ -102,8 +103,9 @@ const AddDish = () => {
       <div className="add-dish-header">
         <h1 className="add-dish-title">Ajouter un Plat</h1>
         <div className="add-dish-header-actions">
-          <Button variant="outline" onClick={() => navigate('/menu')}>Annuler</Button>
+          <Button variant="outline" onClick={() => navigate('/menu')} disabled={loading}>Annuler</Button>
           <Button variant="primary" onClick={handleSubmit} disabled={loading}>
+            {loading && <Loader size="sm" color="#ffffff" />}
             {loading ? 'Enregistrement...' : 'Enregistrer'}
           </Button>
         </div>

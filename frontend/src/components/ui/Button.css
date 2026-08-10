@@ -4,6 +4,7 @@
   justify-content: center;
   font-family: var(--font-family);
   font-weight: var(--weight-medium);
+  line-height: 1;
   border-radius: var(--radius-md);
   border: 1px solid transparent;
   cursor: pointer;

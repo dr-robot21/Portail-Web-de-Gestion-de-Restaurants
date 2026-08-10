@@ -33,7 +33,7 @@ const ResetSuccess = () => {
         onClick={() => navigate('/login')}
         style={{ backgroundColor: '#16a34a', borderColor: '#16a34a' }}
       >
-        Back to Login
+        Revenir à la connexion
       </Button>
     </div>
   );
