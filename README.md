@@ -152,7 +152,75 @@ All endpoints are prefixed with `/api` and (except auth) require a `Authorizatio
 
 - `VITE_API_URL` — base URL of the API, e.g. `http://localhost:8000/api`
 
+## Deployment
+
+The project is pre-configured for free hosting:
+
+- **API (Laravel)** → [Render](https://render.com) free tier, via Docker
+- **Frontend (React SPA)** → [Vercel](https://vercel.com) free tier
+- **Database (MySQL)** → any free MySQL host (Clever Cloud, Aiven, Railway, …)
+
+### 1. Deploy the API to Render
+
+The backend ships with a `Dockerfile` (nginx + PHP-FPM + supervisor) and a
+`render.yaml` blueprint, so the simplest path is the **Blueprint**:
+
+1. Push the repo to GitHub.
+2. In Render: **New → Blueprint** and select the repo.
+3. Set the `sync: false` env vars (Render will ask you to fill them):
+   - `FRONTEND_URL` → your Vercel frontend URL, e.g. `https://my-app.vercel.app`
+   - `APP_KEY` → generate with `php artisan key:generate`
+   - `JWT_SECRET` → generate with `php artisan jwt:secret`
+   - `DB_HOST` / `DB_DATABASE` / `DB_USERNAME` / `DB_PASSWORD` → your free MySQL host
+4. Deploy. The entrypoint automatically runs `php artisan migrate --force` and
+   `php artisan storage:link` on startup. The health check hits `/up`.
+
+> **Manual alternative:** In Render, create a **Web Service** → pick Docker as
+> runtime → Root Directory `backend` → deploy. Then set the env vars above.
+
+**Environment variables** (see `backend/.env.production.example`):
+
+| Variable | Purpose |
+| -------- | ------- |
+| `APP_URL` | Your Render URL (used to build storage URLs) |
+| `FRONTEND_URL` | Vercel frontend origin (used by CORS) |
+| `CORS_ALLOWED_ORIGINS` | Comma-separated extra allowed origins (optional) |
+| `APP_KEY`, `JWT_SECRET` | App + JWT signing secrets |
+| `DB_*` | MySQL connection details |
+| `FILESYSTEM_DISK` | `local` (default) or `s3` for persistent uploads |
+
+> **Note on uploads:** with `FILESYSTEM_DISK=local`, uploaded images live on the
+> container disk and are lost on every redeploy. For persistent storage set
+> `FILESYSTEM_DISK=s3` and provide `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`,
+> `AWS_DEFAULT_REGION`, `AWS_BUCKET` (any S3-compatible provider works).
+
+### 2. Deploy the frontend to Vercel
+
+1. Push the repo to GitHub.
+2. In Vercel: **New Project** → import the repo → **Root Directory**: `frontend`.
+3. Vercel auto-detects Vite. Add one environment variable:
+   - `VITE_API_URL` → `https://your-api.onrender.com/api`
+4. Deploy. `vercel.json` already rewrites all routes to `index.html` for SPA
+   routing.
+
+> `VITE_API_URL` is baked in at build time, so set it in **Project → Settings →
+> Environment Variables** before each production build (or in the build command).
+
+### 3. Seed the database (once)
+
+Render runs `php artisan migrate` automatically, but seeding is manual. From a
+local machine with the `.env` pointed at your production MySQL:
+
+```bash
+cd backend
+php artisan db:seed        # creates the Super Admin
+php artisan db:seed --class=TestDataSeeder   # optional demo data
+```
+
+Then change the default Super Admin password from the UI (Settings).
+
 ## Notes
 
 - The "Orders" module is a placeholder and returns a "coming soon" page.
-- The frontend includes a `public/netlify.toml` for SPA routing on Netlify.
+- The frontend includes a `public/netlify.toml` and a `vercel.json` for SPA
+  routing on Netlify / Vercel.
