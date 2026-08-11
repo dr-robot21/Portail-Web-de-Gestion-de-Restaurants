@@ -305,8 +305,6 @@ class RestaurantController extends Controller
             'deleted'
         );
 
-        $restaurant->delete();
-
         NotificationService::notifySuperAdmins(
             'Restaurant supprimé',
             "Le restaurant « {$name} » a été supprimé.",
@@ -316,6 +314,8 @@ class RestaurantController extends Controller
             $id,
             'deleted'
         );
+
+        $restaurant->delete();
 
         return response()->json(['message' => 'Restaurant deleted successfully.']);
     }
