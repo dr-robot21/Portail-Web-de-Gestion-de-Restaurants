@@ -240,6 +240,7 @@ const Notifications = () => {
           {loading && hasMore && (
             <div className="notifications-infinite-loader">
               <Loader size="sm" />
+              <span>Chargement des notifications...</span>
             </div>
           )}
         </Card>

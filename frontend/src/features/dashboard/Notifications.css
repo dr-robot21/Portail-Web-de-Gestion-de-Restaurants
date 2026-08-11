@@ -160,7 +160,12 @@
 .notifications-infinite-loader {
   display: flex;
   justify-content: center;
+  align-items: center;
+  gap: var(--spacing-3);
   padding: var(--spacing-5);
+  color: var(--text-secondary);
+  font-family: var(--font-family);
+  font-size: var(--font-sm);
 }
 
 .notification-meta {
