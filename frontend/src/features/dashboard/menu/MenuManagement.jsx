@@ -43,13 +43,13 @@ const MenuManagement = () => {
     }
   }, [dispatch, user]);
 
-  const currentTab = activeTab ?? categories[0]?.id ?? null;
+  const currentTab = activeTab ?? 'all';
 
   // Pagination
   const PAGE_SIZE = 6;
   const [currentPage, setCurrentPage] = useState(1);
 
-  const filteredDishes = dishes.filter(d => d.category_id === currentTab && (
+  const filteredDishes = dishes.filter(d => (currentTab === 'all' || Number(d.category_id) === Number(currentTab)) && (
     search === '' || d.name.toLowerCase().includes(search.toLowerCase())
   ));
   const totalItems = filteredDishes.length;
@@ -121,22 +121,28 @@ const MenuManagement = () => {
           placeholder="Rechercher un plat..." 
           icon={SearchIcon}
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => { setSearch(e.target.value); setCurrentPage(1); }}
         />
       </div>
 
       <div className="menu-tabs-container">
-        {categories.length > 0 && (
-          <Tabs 
-            tabs={categories.map(c => ({ id: c.id, label: c.name, icon: <span style={{marginRight: '8px'}}>{c.icon || '🍴'}</span> }))} 
-            activeTab={currentTab} 
-            onChange={handleTabChange} 
-          />
-        )}
+        <Tabs 
+          tabs={[
+            { id: 'all', label: 'Tous les plats', icon: <span style={{ marginRight: '8px' }}>🍽️</span> },
+            ...categories.map(c => ({ id: c.id, label: c.name, icon: <span style={{ marginRight: '8px' }}>{c.icon || '🍴'}</span> })),
+          ]} 
+          activeTab={currentTab} 
+          onChange={handleTabChange} 
+        />
       </div>
 
       <div className="menu-grid">
         {dishLoading && <div style={{ padding: 'var(--spacing-4)' }}>Chargement des plats...</div>}
+        {!dishLoading && filteredDishes.length === 0 && (
+          <div style={{ padding: 'var(--spacing-6)', textAlign: 'center', color: 'var(--text-secondary)' }}>
+            Aucun plat ne correspond à ce filtre.
+          </div>
+        )}
         {!dishLoading && pagedDishes.map(dish => (
           <DishCard 
             key={dish.id} 

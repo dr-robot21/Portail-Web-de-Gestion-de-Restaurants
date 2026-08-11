@@ -103,7 +103,7 @@ const AddDish = () => {
       <div className="add-dish-header">
         <h1 className="add-dish-title">Ajouter un Plat</h1>
         <div className="add-dish-header-actions">
-          <Button variant="outline" onClick={() => navigate('/menu')} disabled={loading}>Annuler</Button>
+          <Button variant="outline" onClick={() => navigate('/menu/plats')} disabled={loading}>Annuler</Button>
           <Button variant="primary" onClick={handleSubmit} disabled={loading}>
             {loading && <Loader size="sm" color="#ffffff" />}
             {loading ? 'Enregistrement...' : 'Enregistrer'}
@@ -225,7 +225,7 @@ const AddDish = () => {
 
       <SuccessModal
         isOpen={successModalOpen}
-        onClose={() => { setSuccessModalOpen(false); navigate('/menu'); }}
+        onClose={() => { setSuccessModalOpen(false); navigate('/menu/plats'); }}
         message={modalMessage}
       />
       <ErrorModal

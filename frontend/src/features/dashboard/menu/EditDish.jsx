@@ -169,7 +169,7 @@ const EditDish = () => {
       <div className="add-dish-header">
         <h1 className="add-dish-title">Modifier le Plat</h1>
         <div className="add-dish-header-actions">
-          <Button variant="outline" onClick={() => navigate('/menu')}>Annuler</Button>
+          <Button variant="outline" onClick={() => navigate('/menu/plats')}>Annuler</Button>
           <Button variant="outline" style={{ color: 'var(--error-text)', borderColor: 'var(--error-border)' }} onClick={() => setDeleteConfirmOpen(true)}>
             {TrashIcon} Supprimer
           </Button>
@@ -338,7 +338,7 @@ const EditDish = () => {
 
       <SuccessModal
         isOpen={successModalOpen}
-        onClose={() => { setSuccessModalOpen(false); navigate('/menu'); }}
+        onClose={() => { setSuccessModalOpen(false); navigate('/menu/plats'); }}
         message={modalMessage}
       />
       <ErrorModal
