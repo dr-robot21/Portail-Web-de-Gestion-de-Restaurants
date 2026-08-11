@@ -61,7 +61,7 @@ class RestaurantController extends Controller
             'country'       => 'nullable|string|max:100',
             'opening_date'  => 'nullable|date',
             'description'   => 'nullable|string',
-            'logo'          => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'logo'          => 'nullable|image|mimes:jpg,jpeg,png,webp|max:10240',
             'manager_id'    => 'nullable|exists:users,id',
         ]);
 
@@ -156,7 +156,7 @@ class RestaurantController extends Controller
             'opening_date'  => 'nullable|date',
             'description'   => 'nullable|string',
             'is_active'     => 'nullable|boolean',
-            'logo'          => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'logo'          => 'nullable|image|mimes:jpg,jpeg,png,webp|max:10240',
             'manager_id'    => 'nullable|exists:users,id',
             'opening_hours' => 'nullable|array',
         ]);

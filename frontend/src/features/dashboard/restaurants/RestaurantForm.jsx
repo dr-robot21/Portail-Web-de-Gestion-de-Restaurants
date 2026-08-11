@@ -113,7 +113,11 @@ const RestaurantForm = () => {
       }
       setSuccessModalOpen(true);
     } catch (err) {
-      setModalMessage(err.response?.data?.message || "Une erreur est survenue lors de l'enregistrement.");
+      const errors = err.response?.data?.errors;
+      const msg = errors
+        ? Object.values(errors).flat().join(' ')
+        : err.response?.data?.message;
+      setModalMessage(msg || "Une erreur est survenue lors de l'enregistrement.");
       setErrorModalOpen(true);
     } finally {
       setLoading(false);
