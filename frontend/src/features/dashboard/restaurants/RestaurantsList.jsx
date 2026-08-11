@@ -10,6 +10,7 @@ import Input from '../../../components/ui/Input';
 import Modal from '../../../components/ui/Modal';
 import SuccessModal from '../../../components/ui/SuccessModal';
 import ErrorModal from '../../../components/ui/ErrorModal';
+import Loader from '../../../components/ui/Loader';
 import './RestaurantsList.css';
 
 // MOCK data removed, fetching from Redux
@@ -24,6 +25,7 @@ const RestaurantsList = () => {
   
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [restaurantToDelete, setRestaurantToDelete] = useState(null);
+  const [deleting, setDeleting] = useState(false);
   
   const [errorModalOpen, setErrorModalOpen] = useState(false);
   const [successModalOpen, setSuccessModalOpen] = useState(false);
@@ -39,7 +41,8 @@ const RestaurantsList = () => {
   };
 
   const confirmDelete = async () => {
-    if (!restaurantToDelete) return;
+    if (!restaurantToDelete || deleting) return;
+    setDeleting(true);
     try {
       await api.delete(`/restaurants/${restaurantToDelete.id}`);
       setDeleteModalOpen(false);
@@ -51,6 +54,8 @@ const RestaurantsList = () => {
       setDeleteModalOpen(false);
       setModalMessage(error.response?.data?.message || 'Erreur lors de la suppression.');
       setErrorModalOpen(true);
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -200,7 +205,7 @@ const RestaurantsList = () => {
       </div>
 
       {/* Delete Confirmation Modal */}
-      <Modal isOpen={deleteModalOpen} onClose={() => setDeleteModalOpen(false)} hideCloseButton={true}>
+      <Modal isOpen={deleteModalOpen} onClose={() => { if (!deleting) setDeleteModalOpen(false); }} hideCloseButton={true}>
         <div style={{ textAlign: 'center', padding: 'var(--spacing-6) var(--spacing-4)' }}>
           <div style={{ 
             width: '64px', height: '64px', borderRadius: '50%', 
@@ -222,8 +227,10 @@ const RestaurantsList = () => {
             Cette action est irréversible.
           </p>
           <div style={{ display: 'flex', justifyContent: 'center', gap: 'var(--spacing-4)' }}>
-            <Button variant="outline" onClick={() => setDeleteModalOpen(false)}>Annuler</Button>
-            <Button variant="primary" style={{ backgroundColor: 'var(--error-text)' }} onClick={confirmDelete}>Supprimer</Button>
+            <Button variant="outline" onClick={() => setDeleteModalOpen(false)} disabled={deleting}>Annuler</Button>
+            <Button variant="primary" style={{ backgroundColor: 'var(--error-text)' }} onClick={confirmDelete} disabled={deleting}>
+              {deleting ? (<><Loader size="sm" color="#fff" />Suppression...</>) : 'Supprimer'}
+            </Button>
           </div>
         </div>
       </Modal>
