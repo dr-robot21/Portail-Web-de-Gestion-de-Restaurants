@@ -252,6 +252,13 @@
   margin-right: var(--spacing-4);
 }
 
+.restaurant-form-manager-avatar div {
+  width: 15px;
+  height: 15px;
+  display: grid;
+  place-items: center;
+}
+
 .restaurant-form-manager-info {
   flex-grow: 1;
 }
