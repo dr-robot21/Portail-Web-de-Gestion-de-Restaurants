@@ -3,17 +3,28 @@
   align-items: center;
   gap: var(--spacing-3);
   overflow-x: auto;
-  padding-bottom: var(--spacing-2); /* For scrollbar if needed */
+  padding: var(--spacing-1) var(--spacing-1);
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.ui-tabs--overflow {
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 var(--spacing-6), #000 calc(100% - var(--spacing-6)), transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0, #000 var(--spacing-6), #000 calc(100% - var(--spacing-6)), transparent 100%);
+}
+
+.ui-tabs::-webkit-scrollbar {
+  display: none;
 }
 
 .ui-tab {
   display: inline-flex;
   align-items: center;
   gap: var(--spacing-2);
-  padding: var(--spacing-3) var(--spacing-6);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  background-color: var(--surface);
+  padding: var(--spacing-2) var(--spacing-5);
+  border: none;
+  border-radius: 999px;
+  background-color: transparent;
   color: var(--text-secondary);
   font-family: var(--font-family);
   font-size: var(--font-sm);
@@ -21,6 +32,7 @@
   cursor: pointer;
   white-space: nowrap;
   transition: all var(--transition-fast);
+  flex-shrink: 0;
 }
 
 .ui-tab:hover {
@@ -29,17 +41,22 @@
 }
 
 .ui-tab--active {
-  border-color: var(--primary);
-  color: var(--primary);
-  background-color: #fff;
-  box-shadow: 0 0 0 1px var(--primary);
+  background-color: var(--primary);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.ui-tab--active:hover {
+  background-color: var(--primary);
+  color: #fff;
 }
 
 .ui-tab-icon {
   display: flex;
   align-items: center;
+  font-size: var(--font-md);
 }
 
 .ui-tab--active .ui-tab-icon {
-  color: var(--primary);
+  color: #fff;
 }
