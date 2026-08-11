@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchCategories, addCategory, updateCategory, deleteCategory } from '../../../store/slices/categoriesSlice';
 import { fetchDishes, deleteDish, updateDish } from '../../../store/slices/dishesSlice';
 import Button from '../../../components/ui/Button';
+import Loader from '../../../components/ui/Loader';
 import Card from '../../../components/ui/Card';
 import Badge from '../../../components/ui/Badge';
 import Modal from '../../../components/ui/Modal';
@@ -32,6 +33,10 @@ const MenuStructure = () => {
   const [successModalOpen, setSuccessModalOpen] = useState(false);
   const [errorModalOpen, setErrorModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
+
+  const [submitting, setSubmitting] = useState(false);
+  const [deletingCategory, setDeletingCategory] = useState(false);
+  const [deletingDish, setDeletingDish] = useState(false);
 
   useEffect(() => {
     if (user?.restaurant_id) {
@@ -62,10 +67,12 @@ const MenuStructure = () => {
       return;
     }
 
+    setSubmitting(true);
     const payload = { name: categoryForm.name.trim(), icon: categoryForm.icon.trim() };
     const result = editingCategory
       ? await dispatch(updateCategory({ id: editingCategory.id, data: payload }))
       : await dispatch(addCategory({ ...payload, restaurant_id: user?.restaurant_id }));
+    setSubmitting(false);
 
     setCategoryModalOpen(false);
     if (result.meta.requestStatus === 'fulfilled') {
@@ -79,7 +86,9 @@ const MenuStructure = () => {
 
   const handleDeleteCategory = async () => {
     if (!categoryToDelete) return;
+    setDeletingCategory(true);
     const result = await dispatch(deleteCategory(categoryToDelete.id));
+    setDeletingCategory(false);
     setDeleteCategoryModalOpen(false);
     setCategoryToDelete(null);
     if (result.meta.requestStatus === 'fulfilled') {
@@ -93,7 +102,9 @@ const MenuStructure = () => {
 
   const handleDeleteDish = async () => {
     if (!dishToDelete) return;
+    setDeletingDish(true);
     const result = await dispatch(deleteDish(dishToDelete.id));
+    setDeletingDish(false);
     setDeleteDishModalOpen(false);
     setDishToDelete(null);
     if (result.meta.requestStatus === 'fulfilled') {
@@ -271,9 +282,10 @@ const MenuStructure = () => {
           />
         </div>
         <div className="menu-structure-modal-actions">
-          <Button variant="outline" onClick={() => setCategoryModalOpen(false)}>Annuler</Button>
-          <Button variant="primary" onClick={handleCategorySubmit}>
-            {editingCategory ? 'Enregistrer' : 'Ajouter'}
+          <Button variant="outline" onClick={() => setCategoryModalOpen(false)} disabled={submitting}>Annuler</Button>
+          <Button variant="primary" onClick={handleCategorySubmit} disabled={submitting}>
+            {submitting && <Loader size="sm" color="#ffffff" />}
+            {submitting ? 'Enregistrement...' : (editingCategory ? 'Enregistrer' : 'Ajouter')}
           </Button>
         </div>
       </Modal>
@@ -296,8 +308,11 @@ const MenuStructure = () => {
             Êtes-vous sûr de vouloir supprimer la catégorie <strong>"{categoryToDelete?.name}"</strong> ?
           </p>
           <div style={{ display: 'flex', justifyContent: 'center', gap: 'var(--spacing-4)' }}>
-            <Button variant="outline" onClick={() => setDeleteCategoryModalOpen(false)}>Annuler</Button>
-            <Button variant="primary" style={{ backgroundColor: 'var(--error-text)' }} onClick={handleDeleteCategory}>Supprimer</Button>
+            <Button variant="outline" onClick={() => setDeleteCategoryModalOpen(false)} disabled={deletingCategory}>Annuler</Button>
+            <Button variant="primary" style={{ backgroundColor: 'var(--error-text)' }} onClick={handleDeleteCategory} disabled={deletingCategory}>
+              {deletingCategory && <Loader size="sm" color="#ffffff" />}
+              {deletingCategory ? 'Suppression...' : 'Supprimer'}
+            </Button>
           </div>
         </div>
       </Modal>
@@ -320,8 +335,11 @@ const MenuStructure = () => {
             Êtes-vous sûr de vouloir supprimer le plat <strong>"{dishToDelete?.name}"</strong> ?
           </p>
           <div style={{ display: 'flex', justifyContent: 'center', gap: 'var(--spacing-4)' }}>
-            <Button variant="outline" onClick={() => setDeleteDishModalOpen(false)}>Annuler</Button>
-            <Button variant="primary" style={{ backgroundColor: 'var(--error-text)' }} onClick={handleDeleteDish}>Supprimer</Button>
+            <Button variant="outline" onClick={() => setDeleteDishModalOpen(false)} disabled={deletingDish}>Annuler</Button>
+            <Button variant="primary" style={{ backgroundColor: 'var(--error-text)' }} onClick={handleDeleteDish} disabled={deletingDish}>
+              {deletingDish && <Loader size="sm" color="#ffffff" />}
+              {deletingDish ? 'Suppression...' : 'Supprimer'}
+            </Button>
           </div>
         </div>
       </Modal>

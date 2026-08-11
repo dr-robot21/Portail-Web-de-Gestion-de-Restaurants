@@ -106,7 +106,7 @@ const UsersList = () => {
       accessor: 'is_active',
       render: (row) => (
         <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-2)' }}>
-          <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: row.is_active ? 'var(--error-text)' : '#cbd5e1' }}></span>
+          <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: row.is_active ? '#22c55e' : '#cbd5e1' }}></span>
           <span style={{ color: row.is_active ? 'var(--text-primary)' : 'var(--text-secondary)' }}>{row.is_active ? 'Actif' : 'Inactif'}</span>
         </div>
       )

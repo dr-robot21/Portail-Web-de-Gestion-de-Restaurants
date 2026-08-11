@@ -6,6 +6,7 @@ import { fetchDishes, deleteDish } from '../../../store/slices/dishesSlice';
 import Tabs from '../../../components/ui/Tabs';
 import Input from '../../../components/ui/Input';
 import Button from '../../../components/ui/Button';
+import Loader from '../../../components/ui/Loader';
 import Modal from '../../../components/ui/Modal';
 import Badge from '../../../components/ui/Badge';
 import SuccessModal from '../../../components/ui/SuccessModal';
@@ -27,6 +28,7 @@ const MenuManagement = () => {
   
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [dishToDelete, setDishToDelete] = useState(null);
+  const [deleting, setDeleting] = useState(false);
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [dishToView, setDishToView] = useState(null);
 
@@ -66,7 +68,9 @@ const MenuManagement = () => {
   const confirmDelete = async () => {
     if (!dishToDelete) return;
 
+    setDeleting(true);
     const result = await dispatch(deleteDish(dishToDelete.id));
+    setDeleting(false);
     setDeleteModalOpen(false);
     setDishToDelete(null);
     if (deleteDish.fulfilled.match(result)) {
@@ -132,7 +136,7 @@ const MenuManagement = () => {
       </div>
 
       <div className="menu-grid">
-        {dishLoading && <div style={{ padding: 'var(--spacing-4)' }}>Loading dishes...</div>}
+        {dishLoading && <div style={{ padding: 'var(--spacing-4)' }}>Chargement des plats...</div>}
         {!dishLoading && pagedDishes.map(dish => (
           <DishCard 
             key={dish.id} 
@@ -197,9 +201,10 @@ const MenuManagement = () => {
             Cette action est irréversible.
           </p>
           <div style={{ display: 'flex', justifyContent: 'center', gap: 'var(--spacing-4)' }}>
-            <Button variant="outline" onClick={() => setDeleteModalOpen(false)}>Annuler</Button>
-            <Button variant="primary" style={{ backgroundColor: 'var(--error-text)' }} onClick={confirmDelete} disabled={dishLoading}>
-              {dishLoading ? 'Suppression...' : 'Supprimer'}
+            <Button variant="outline" onClick={() => setDeleteModalOpen(false)} disabled={deleting}>Annuler</Button>
+            <Button variant="primary" style={{ backgroundColor: 'var(--error-text)' }} onClick={confirmDelete} disabled={deleting}>
+              {deleting && <Loader size="sm" color="#ffffff" />}
+              {deleting ? 'Suppression...' : 'Supprimer'}
             </Button>
           </div>
         </div>
@@ -227,7 +232,7 @@ const MenuManagement = () => {
               
               <div style={{ marginBottom: 'var(--spacing-4)' }}>
                 <Badge variant={dishToView.is_active ? 'success' : 'default'} showDot={false} style={!dishToView.is_active ? { backgroundColor: '#f1f5f9', color: '#64748b' } : {}}>
-                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: dishToView.is_active ? 'var(--error-text)' : '#94a3b8', display: 'inline-block', marginRight: '4px' }}></span>
+                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: dishToView.is_active ? '#22c55e' : '#94a3b8', display: 'inline-block', marginRight: '4px' }}></span>
                   {dishToView.is_active ? 'Disponible' : 'Indisponible'}
                 </Badge>
               </div>
