@@ -125,7 +125,7 @@ const RestaurantMenu = () => {
                         </div>
                       </div>
                       <div className="restaurant-menu-td" style={{ flex: 1 }}>
-                        <span className="restaurant-menu-dish-price">{dish.price} €</span>
+                        <span className="restaurant-menu-dish-price">{dish.price} MAD</span>
                       </div>
                       <div className="restaurant-menu-td" style={{ flex: 1 }}>
                         {dish.is_active ? (

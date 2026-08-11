@@ -221,7 +221,7 @@ const MenuManagement = () => {
                   {dishToView.name}
                 </h2>
                 <div style={{ fontFamily: 'var(--font-family)', fontSize: 'var(--font-xl)', fontWeight: 'bold', color: 'var(--primary)' }}>
-                  {Number(dishToView.price).toFixed(2)} €
+                  {Number(dishToView.price).toFixed(2)} MAD
                 </div>
               </div>
               

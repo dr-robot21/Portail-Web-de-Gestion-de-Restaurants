@@ -40,7 +40,7 @@ const DishCard = ({ dish, onEdit, onView, onDelete }) => {
       <div className="dish-card-content">
         <div className="dish-card-header">
           <h3 className="dish-card-title">{name}</h3>
-          <span className="dish-card-price">{Number(price).toFixed(2)} €</span>
+          <span className="dish-card-price">{Number(price).toFixed(2)} MAD</span>
         </div>
         
         <p className="dish-card-description">{description}</p>

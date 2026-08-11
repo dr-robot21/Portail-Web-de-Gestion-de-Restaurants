@@ -168,7 +168,7 @@ const RestaurantAdminDashboard = () => {
                       <tr key={dish.id}>
                         <td style={{ fontWeight: 'var(--weight-bold)', color: 'var(--text-primary)' }}>{dish.name}</td>
                         <td>{dish.category?.name || '-'}</td>
-                        <td style={{ fontWeight: 'var(--weight-bold)', color: 'var(--error-text)' }}>{dish.price} €</td>
+                        <td style={{ fontWeight: 'var(--weight-bold)', color: 'var(--error-text)' }}>{dish.price} MAD</td>
                         <td>
                           {dish.is_active ? (
                             <Badge variant="success" className="perf-badge perf-badge--success">

@@ -210,7 +210,7 @@ const MenuStructure = () => {
                           </div>
                         </div>
                         <div className="menu-structure-td" style={{ flex: 1 }}>
-                          <span className="menu-structure-dish-price">{Number(dish.price).toFixed(2)} €</span>
+                          <span className="menu-structure-dish-price">{Number(dish.price).toFixed(2)} MAD</span>
                         </div>
                         <div className="menu-structure-td" style={{ flex: 1 }}>
                           {dish.is_active ? (

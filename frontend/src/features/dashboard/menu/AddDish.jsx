@@ -141,7 +141,7 @@ const AddDish = () => {
             <h2 className="add-dish-card-title">Tarification &amp; Détails</h2>
             <div className="add-dish-row">
               <div className="add-dish-col">
-                <Input name="price" value={formData.price} onChange={handleChange} label="Prix de vente *" placeholder="€ 0.00" type="number" step="0.01" min="0" />
+                <Input name="price" value={formData.price} onChange={handleChange} label="Prix de vente *" placeholder="0.00 MAD" type="number" step="0.01" min="0" />
               </div>
               <div className="add-dish-col">
                 <div className="ui-input-header">
