@@ -46,6 +46,8 @@ class AuthController extends Controller
             return response()->json(['message' => 'Your account has been deactivated.'], 403);
         }
 
+        $user->update(['last_login_at' => now()]);
+
         return $this->respondWithToken($token, $user);
     }
 
@@ -235,6 +237,7 @@ class AuthController extends Controller
             'avatar_url' => $user->avatar_url,
             'is_active' => $user->is_active,
             'restaurant_id' => $user->restaurant_id,
+            'last_login_at' => $user->last_login_at,
         ];
     }
 }

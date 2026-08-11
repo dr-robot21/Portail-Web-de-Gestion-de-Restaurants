@@ -23,6 +23,7 @@ class User extends Authenticatable implements JWTSubject
         'avatar',
         'is_active',
         'restaurant_id',
+        'last_login_at',
     ];
 
     protected $hidden = [
@@ -38,6 +39,7 @@ class User extends Authenticatable implements JWTSubject
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_active' => 'boolean',
+            'last_login_at' => 'datetime',
         ];
     }
 
