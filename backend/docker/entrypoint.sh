@@ -10,6 +10,13 @@ if [ "$PORT" != "80" ]; then
 fi
 echo "nginx configured to listen on ports ${PORT} and 80"
 
+# Ensure php-fpm (www-data) can write to storage at runtime.
+# Build-time chown is not enough on some platforms (e.g. Railway volumes).
+chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache 2>/dev/null \
+    || echo "warning: could not chown storage (continuing)"
+chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache 2>/dev/null \
+    || true
+
 # Validate config but NEVER let this block startup.
 if nginx -t 2>&1; then
     echo "nginx config OK"

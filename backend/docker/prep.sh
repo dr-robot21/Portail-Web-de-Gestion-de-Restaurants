@@ -21,6 +21,8 @@ if [ -n "${DB_HOST}" ] && [ -n "${DB_PORT}" ]; then
 fi
 
 # Prepare the app (failures here must not take the container down).
+mkdir -p /var/www/html/storage/app/public/dishes /var/www/html/storage/app/public/logos /var/www/html/storage/app/public/avatars
+chown -R www-data:www-data /var/www/html/storage/app/public 2>/dev/null || true
 php artisan migrate --force --no-interaction > /proc/1/fd/1 2>&1 || echo "[prep] migrate failed (continuing)" > /proc/1/fd/1
 php artisan db:seed --force --no-interaction > /proc/1/fd/1 2>&1 || echo "[prep] seed failed (continuing)" > /proc/1/fd/1
 php artisan storage:link --force > /proc/1/fd/1 2>&1 || true
