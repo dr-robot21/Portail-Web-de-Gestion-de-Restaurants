@@ -6,16 +6,21 @@ import { MENU_LIST } from "./menuConfig";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../../store/slices/authSlice";
+import Loader from "../../components/ui/Loader";
+import { useState } from "react";
 
 function Sidebar() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [loggingOut, setLoggingOut] = useState(false);
   const { user } = useSelector((state) => state.auth);
   const role = user?.role || "restaurant_admin";
   const navList =
     role === "super_admin" ? MENU_LIST.SUPER_ADMIN : MENU_LIST.RESTAURANT_ADMIN;
 
   const handleLogout = async () => {
+    if (loggingOut) return;
+    setLoggingOut(true);
     await dispatch(logout());
     navigate("/login");
   };
@@ -82,9 +87,9 @@ function Sidebar() {
             <span className={styles.label}>Centre d'aide</span>
           </NavLink>
 
-          <button className={styles.logout} onClick={handleLogout}>
-            <FiLogOut />
-            <span className={styles.label}>Logout</span>
+          <button className={styles.logout} onClick={handleLogout} disabled={loggingOut}>
+            {loggingOut ? <Loader size="sm" /> : <FiLogOut />}
+            <span className={styles.label}>{loggingOut ? 'Déconnexion...' : 'Logout'}</span>
           </button>
         </div>
       </div>
