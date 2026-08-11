@@ -17,7 +17,8 @@ class NotificationController extends Controller
         $user = auth('api')->user();
         $perPage = $request->get('per_page', 20);
 
-        $notifications = Notification::where('user_id', $user->id)
+        $notifications = Notification::with('restaurant:id,name')
+            ->where('user_id', $user->id)
             ->latest()
             ->paginate($perPage);
 

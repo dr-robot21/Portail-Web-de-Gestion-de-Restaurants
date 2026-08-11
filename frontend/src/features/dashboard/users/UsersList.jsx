@@ -9,6 +9,7 @@ import Input from '../../../components/ui/Input';
 import Modal from '../../../components/ui/Modal';
 import SuccessModal from '../../../components/ui/SuccessModal';
 import ErrorModal from '../../../components/ui/ErrorModal';
+import { FiEye, FiEdit2, FiTrash2 } from 'react-icons/fi';
 import './UsersList.css';
 
 const ROLE_LABEL = {
@@ -116,15 +117,15 @@ const UsersList = () => {
       accessor: 'actions',
       render: (row) => (
         <div className="users-list-actions">
-          <Button variant="outline" size="sm" onClick={() => navigate(`/users/${row.id}`)} style={{ border: 'none', color: 'var(--text-secondary)' }}>
-            Voir
-          </Button>
-          <Button variant="outline" size="sm" onClick={() => navigate(`/users/edit/${row.id}`)} style={{ border: 'none', color: 'var(--text-secondary)' }}>
-            Modifier
-          </Button>
-          <Button variant="outline" size="sm" onClick={() => handleDelete(row)} style={{ border: 'none', color: 'var(--error-text)' }}>
-            Supprimer
-          </Button>
+          <button className="users-action-btn" title="Voir" onClick={() => navigate(`/users/${row.id}`)}>
+            <FiEye />
+          </button>
+          <button className="users-action-btn" title="Modifier" onClick={() => navigate(`/users/edit/${row.id}`)}>
+            <FiEdit2 />
+          </button>
+          <button className="users-action-btn users-action-btn--danger" title="Supprimer" onClick={() => handleDelete(row)}>
+            <FiTrash2 />
+          </button>
         </div>
       )
     }

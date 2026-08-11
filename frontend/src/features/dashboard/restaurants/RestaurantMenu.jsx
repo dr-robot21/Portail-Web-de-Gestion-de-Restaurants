@@ -44,10 +44,10 @@ const RestaurantMenu = () => {
           <p className="restaurant-menu-subtitle">Aperçu de la structure du menu pour {restaurant.name}.</p>
         </div>
         <div style={{ display: 'flex', gap: 'var(--spacing-3)' }}>
-          <Button variant="outline" onClick={() => navigate('/menu')}>
+          <Button variant="outline" onClick={() => navigate(`/menu?restaurant=${restaurant.id}`)}>
             Gérer les catégories
           </Button>
-          <Button variant="primary" style={{ backgroundColor: 'var(--error-text)', borderColor: 'var(--error-text)' }} onClick={() => navigate('/menu/plats')}>
+          <Button variant="primary" style={{ backgroundColor: 'var(--error-text)', borderColor: 'var(--error-text)' }} onClick={() => navigate(`/menu/plats?restaurant=${restaurant.id}`)}>
             Gérer les plats
           </Button>
         </div>
@@ -141,7 +141,7 @@ const RestaurantMenu = () => {
                         )}
                       </div>
                       <div className="restaurant-menu-td restaurant-menu-td-actions" style={{ flex: 1, justifyContent: 'flex-end' }}>
-                        <button className="restaurant-menu-action-btn" onClick={() => navigate(`/menu/edit/${dish.id}`)}>{EditIcon}</button>
+                        <button className="restaurant-menu-action-btn" onClick={() => navigate(`/menu/edit/${dish.id}?restaurant=${restaurant.id}`)}>{EditIcon}</button>
                       </div>
                     </div>
                   ))}

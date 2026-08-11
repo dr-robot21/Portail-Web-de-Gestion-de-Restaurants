@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, Link, useParams } from 'react-router-dom';
+import { useNavigate, Link, useParams, useSearchParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateDish, deleteDish } from '../../../store/slices/dishesSlice';
 import { fetchCategories } from '../../../store/slices/categoriesSlice';
@@ -20,9 +20,12 @@ const EditDish = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [searchParams] = useSearchParams();
   const { loading } = useSelector(state => state.dishes);
   const { list: categories } = useSelector(state => state.categories);
   const { user } = useSelector(state => state.auth);
+
+  const restaurantId = user?.restaurant_id || searchParams.get('restaurant') || null;
 
   const [formData, setFormData] = useState({
     name: '',
@@ -44,8 +47,8 @@ const EditDish = () => {
   const [modalMessage, setModalMessage] = useState('');
 
   useEffect(() => {
-    if (user?.restaurant_id) {
-      dispatch(fetchCategories(user.restaurant_id));
+    if (restaurantId) {
+      dispatch(fetchCategories(restaurantId));
     }
     (async () => {
       try {
@@ -163,13 +166,13 @@ const EditDish = () => {
   return (
     <div className="add-dish-page">
       <div className="add-dish-breadcrumb">
-        <Link to="/menu/plats">Plats</Link> &gt; <span>Modifier le Plat</span>
+        <Link to={`/menu/plats${restaurantId ? `?restaurant=${restaurantId}` : ''}`}>Plats</Link> &gt; <span>Modifier le Plat</span>
       </div>
 
       <div className="add-dish-header">
         <h1 className="add-dish-title">Modifier le Plat</h1>
         <div className="add-dish-header-actions">
-          <Button variant="outline" onClick={() => navigate('/menu/plats')}>Annuler</Button>
+          <Button variant="outline" onClick={() => navigate(`/menu/plats${restaurantId ? `?restaurant=${restaurantId}` : ''}`)}>Annuler</Button>
           <Button variant="outline" style={{ color: 'var(--error-text)', borderColor: 'var(--error-border)' }} onClick={() => setDeleteConfirmOpen(true)}>
             {TrashIcon} Supprimer
           </Button>
@@ -338,7 +341,7 @@ const EditDish = () => {
 
       <SuccessModal
         isOpen={successModalOpen}
-        onClose={() => { setSuccessModalOpen(false); navigate('/menu/plats'); }}
+        onClose={() => { setSuccessModalOpen(false); navigate(`/menu/plats${restaurantId ? `?restaurant=${restaurantId}` : ''}`); }}
         message={modalMessage}
       />
       <ErrorModal

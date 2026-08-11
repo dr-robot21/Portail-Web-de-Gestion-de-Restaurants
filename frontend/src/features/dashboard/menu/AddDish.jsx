@@ -22,6 +22,8 @@ const AddDish = () => {
   const { list: categories } = useSelector(state => state.categories);
   const { user } = useSelector(state => state.auth);
 
+  const restaurantId = user?.restaurant_id || searchParams.get('restaurant') || null;
+
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -38,10 +40,10 @@ const AddDish = () => {
   const [modalMessage, setModalMessage] = useState('');
 
   useEffect(() => {
-    if (user?.restaurant_id) {
-      dispatch(fetchCategories(user.restaurant_id));
+    if (restaurantId) {
+      dispatch(fetchCategories(restaurantId));
     }
-  }, [dispatch, user]);
+  }, [dispatch, restaurantId]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -71,7 +73,7 @@ const AddDish = () => {
       setErrorModalOpen(true);
       return;
     }
-    const payload = { ...formData, restaurant_id: user?.restaurant_id };
+    const payload = { ...formData, restaurant_id: restaurantId };
     if (imageFile) payload.image = imageFile;
 
     const result = await dispatch(addDish(payload));
@@ -97,13 +99,13 @@ const AddDish = () => {
   return (
     <div className="add-dish-page">
       <div className="add-dish-breadcrumb">
-        <Link to="/menu/plats">Plats</Link> &gt; <span>Nouveau Plat</span>
+        <Link to={`/menu/plats${restaurantId ? `?restaurant=${restaurantId}` : ''}`}>Plats</Link> &gt; <span>Nouveau Plat</span>
       </div>
 
       <div className="add-dish-header">
         <h1 className="add-dish-title">Ajouter un Plat</h1>
         <div className="add-dish-header-actions">
-          <Button variant="outline" onClick={() => navigate('/menu/plats')} disabled={loading}>Annuler</Button>
+          <Button variant="outline" onClick={() => navigate(`/menu/plats${restaurantId ? `?restaurant=${restaurantId}` : ''}`)} disabled={loading}>Annuler</Button>
           <Button variant="primary" onClick={handleSubmit} disabled={loading}>
             {loading && <Loader size="sm" color="#ffffff" />}
             {loading ? 'Enregistrement...' : 'Enregistrer'}
@@ -225,7 +227,7 @@ const AddDish = () => {
 
       <SuccessModal
         isOpen={successModalOpen}
-        onClose={() => { setSuccessModalOpen(false); navigate('/menu/plats'); }}
+        onClose={() => { setSuccessModalOpen(false); navigate(`/menu/plats${restaurantId ? `?restaurant=${restaurantId}` : ''}`); }}
         message={modalMessage}
       />
       <ErrorModal

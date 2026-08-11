@@ -70,7 +70,10 @@ class CategoryController extends Controller
             $restaurantId,
             'Nouvelle catégorie',
             "La catégorie « {$category->name} » a été ajoutée au menu.",
-            'success'
+            'success',
+            'category',
+            $category->id,
+            'created'
         );
 
         return response()->json($category->loadCount('dishes'), 201);
@@ -119,7 +122,10 @@ class CategoryController extends Controller
             $category->restaurant_id,
             'Catégorie modifiée',
             "La catégorie « {$category->name} » a été mise à jour.",
-            'info'
+            'info',
+            'category',
+            $category->id,
+            'updated'
         );
 
         return response()->json($category->loadCount('dishes'));
@@ -145,7 +151,10 @@ class CategoryController extends Controller
             $restaurantId,
             'Catégorie supprimée',
             "La catégorie « {$name} » a été supprimée du menu.",
-            'warning'
+            'warning',
+            'category',
+            $id,
+            'deleted'
         );
 
         return response()->json(['message' => 'Category deleted successfully.']);

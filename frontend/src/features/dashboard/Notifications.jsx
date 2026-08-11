@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import {
   fetchNotifications,
   markNotificationRead,
@@ -9,20 +10,72 @@ import {
 import Button from '../../components/ui/Button';
 import Card from '../../components/ui/Card';
 import Modal from '../../components/ui/Modal';
+import Loader from '../../components/ui/Loader';
 import './Notifications.css';
+
+const PER_PAGE = 10;
 
 const Notifications = () => {
   const dispatch = useDispatch();
-  const { list: notifications, loading, unreadCount } = useSelector(state => state.notifications);
+  const navigate = useNavigate();
+  const { list: notifications, loading, hasMore, unreadCount } = useSelector(state => state.notifications);
   const [confirmDelete, setConfirmDelete] = useState(null);
+  const { user } = useSelector(state => state.auth);
+  const pageRef = useRef(1);
+  const sentinelRef = useRef(null);
+  const isLoadingRef = useRef(false);
 
   useEffect(() => {
-    dispatch(fetchNotifications());
+    pageRef.current = 1;
+    dispatch(fetchNotifications({ page: 1, per_page: PER_PAGE }));
   }, [dispatch]);
+
+  const loadMore = useCallback(() => {
+    if (isLoadingRef.current || !hasMore) return;
+    isLoadingRef.current = true;
+    const nextPage = pageRef.current + 1;
+    pageRef.current = nextPage;
+    dispatch(fetchNotifications({ page: nextPage, per_page: PER_PAGE })).finally(() => {
+      isLoadingRef.current = false;
+    });
+  }, [dispatch, hasMore]);
+
+  useEffect(() => {
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) loadMore();
+      },
+      { rootMargin: '200px' }
+    );
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [loadMore]);
+
+  const entityPath = (notification) => {
+    if (!notification.entity_type || !notification.entity_id) return null;
+    switch (notification.entity_type) {
+      case 'dish':
+        return `/menu/edit/${notification.entity_id}`;
+      case 'category':
+        return '/menu/categories';
+      case 'restaurant':
+        return `/restaurants/${notification.entity_id}`;
+      case 'user':
+        return `/users/${notification.entity_id}`;
+      default:
+        return null;
+    }
+  };
 
   const handleItemClick = (notification) => {
     if (!notification.is_read) {
       dispatch(markNotificationRead(notification.id));
+    }
+    const path = entityPath(notification);
+    if (path && notification.entity_action !== 'deleted') {
+      navigate(path);
     }
   };
 
@@ -93,12 +146,21 @@ const Notifications = () => {
     </svg>
   );
 
+  const actionLabel = (action) => {
+    switch (action) {
+      case 'created': return 'ajouté';
+      case 'updated': return 'modifié';
+      case 'deleted': return 'supprimé';
+      default: return '';
+    }
+  };
+
   const renderItem = (notification) => (
     <div
       key={notification.id}
       className={`notification-item${notification.is_read ? '' : ' notification-item--unread'}`}
       onClick={() => handleItemClick(notification)}
-      style={{ cursor: 'pointer' }}
+      style={{ cursor: entityPath(notification) && notification.entity_action !== 'deleted' ? 'pointer' : 'default' }}
     >
       <div className="notification-icon" style={{ backgroundColor: 'var(--background)', color: iconForType(notification.type) }}>
         {BellIcon}
@@ -106,6 +168,18 @@ const Notifications = () => {
       <div className="notification-content">
         <h3 className="notification-item-title">{notification.title}</h3>
         <p className="notification-item-desc">{notification.message}</p>
+        {notification.restaurant_id && user?.role === 'super_admin' && (
+          <div className="notification-restaurant">
+            <span className="notification-restaurant-badge">
+              {(notification.restaurant && notification.restaurant.name) || 'Restaurant'}
+            </span>
+            {notification.entity_action && notification.entity_action !== 'deleted' && (
+              <span className="notification-action-hint">
+                Cliquez pour voir l'élément {actionLabel(notification.entity_action)}
+              </span>
+            )}
+          </div>
+        )}
       </div>
       <div className="notification-meta">
         <span className="notification-time">{formatTime(notification.created_at)}</span>
@@ -120,6 +194,13 @@ const Notifications = () => {
           </button>
         </div>
       </div>
+    </div>
+  );
+
+  const renderSection = (label, items) => (
+    <div className="notifications-section">
+      <h2 className="notifications-section-title">{label}</h2>
+      {items.map(renderItem)}
     </div>
   );
 
@@ -152,17 +233,13 @@ const Notifications = () => {
         </Card>
       ) : (
         <Card className="notifications-card">
-          {today.length > 0 && (
-            <div className="notifications-section">
-              <h2 className="notifications-section-title">Aujourd'hui</h2>
-              {today.map(renderItem)}
-            </div>
-          )}
+          {today.length > 0 && renderSection("Aujourd'hui", today)}
+          {earlier.length > 0 && renderSection('Plus tôt', earlier)}
 
-          {earlier.length > 0 && (
-            <div className="notifications-section notifications-section--alt">
-              <h2 className="notifications-section-title">Plus tôt</h2>
-              {earlier.map(renderItem)}
+          <div ref={sentinelRef} />
+          {loading && hasMore && (
+            <div className="notifications-infinite-loader">
+              <Loader size="sm" />
             </div>
           )}
         </Card>

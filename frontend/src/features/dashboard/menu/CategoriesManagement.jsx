@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchCategories, addCategory, deleteCategory } from '../../../store/slices/categoriesSlice';
 import Button from '../../../components/ui/Button';
@@ -17,6 +18,7 @@ const FILTER_TABS = [
 
 const CategoriesManagement = () => {
   const dispatch = useDispatch();
+  const [searchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState('all');
   
   const [addModalOpen, setAddModalOpen] = useState(false);
@@ -32,16 +34,18 @@ const CategoriesManagement = () => {
   const { list: categories, loading } = useSelector(state => state.categories);
   const { user } = useSelector(state => state.auth);
 
+  const restaurantId = user?.restaurant_id || searchParams.get('restaurant') || null;
+
   useEffect(() => {
-    if (user?.restaurant_id) {
-      dispatch(fetchCategories(user.restaurant_id));
+    if (restaurantId) {
+      dispatch(fetchCategories(restaurantId));
     }
-  }, [dispatch, user]);
+  }, [dispatch, restaurantId]);
 
   const handleAddSubmit = async () => {
     if (!formData.name) return;
 
-    const result = await dispatch(addCategory({ name: formData.name, icon: formData.icon, restaurant_id: user?.restaurant_id }));
+    const result = await dispatch(addCategory({ name: formData.name, icon: formData.icon, restaurant_id: restaurantId }));
     if (addCategory.fulfilled.match(result)) {
       setModalMessage('L\'opération a été effectuée avec succès.');
       setSuccessModalOpen(true);

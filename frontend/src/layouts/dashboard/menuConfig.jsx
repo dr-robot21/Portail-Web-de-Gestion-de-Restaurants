@@ -21,6 +21,11 @@ export const MENU_LIST = {
       icon: <FaUsersCog />,
     },
     {
+      label: "Notifications",
+      path: "/notifications",
+      icon: <MdOutlineNotificationsNone />,
+    },
+    {
       label: "Paramètres",
       path: "/settings",
       icon: <IoIosSettings />,

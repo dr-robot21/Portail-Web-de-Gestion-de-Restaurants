@@ -15,14 +15,24 @@ class Notification extends Model
         'message',
         'type',
         'is_read',
+        'restaurant_id',
+        'entity_type',
+        'entity_id',
+        'entity_action',
     ];
 
     protected $casts = [
         'is_read' => 'boolean',
+        'entity_id' => 'integer',
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function restaurant()
+    {
+        return $this->belongsTo(Restaurant::class);
     }
 }

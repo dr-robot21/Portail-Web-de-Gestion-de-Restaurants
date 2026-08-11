@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchCategories } from '../../../store/slices/categoriesSlice';
 import { fetchDishes, deleteDish } from '../../../store/slices/dishesSlice';
@@ -19,6 +19,7 @@ import './MenuManagement.css';
 const MenuManagement = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [searchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState(null);
   const [search, setSearch] = useState('');
   
@@ -36,12 +37,14 @@ const MenuManagement = () => {
   const { list: dishes, loading: dishLoading } = useSelector(state => state.dishes);
   const { user } = useSelector(state => state.auth);
 
+  const restaurantId = user?.restaurant_id || searchParams.get('restaurant') || null;
+
   useEffect(() => {
-    if (user?.restaurant_id) {
-      dispatch(fetchCategories(user.restaurant_id));
-      dispatch(fetchDishes({ restaurant_id: user.restaurant_id, per_page: 500 }));
+    if (restaurantId) {
+      dispatch(fetchCategories(restaurantId));
+      dispatch(fetchDishes({ restaurant_id: restaurantId, per_page: 500 }));
     }
-  }, [dispatch, user]);
+  }, [dispatch, restaurantId]);
 
   const currentTab = activeTab ?? 'all';
 
@@ -57,7 +60,7 @@ const MenuManagement = () => {
   const pagedDishes = filteredDishes.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
   const handleEdit = (dish) => {
-    navigate(`/menu/edit/${dish.id}`);
+    navigate(`/menu/edit/${dish.id}${restaurantId ? `?restaurant=${restaurantId}` : ''}`);
   };
 
   const handleDelete = (dish) => {
@@ -94,7 +97,7 @@ const MenuManagement = () => {
   };
 
   const handleAddClick = () => {
-    navigate('/menu/add');
+    navigate(`/menu/add${restaurantId ? `?restaurant=${restaurantId}` : ''}`);
   };
 
   const SearchIcon = (
@@ -248,7 +251,7 @@ const MenuManagement = () => {
               </p>
 
               <div style={{ display: 'flex', justifyContent: 'center', gap: 'var(--spacing-4)' }}>
-                <Button variant="outline" onClick={() => { setViewModalOpen(false); navigate(`/menu/edit/${dishToView.id}`); }}>
+                <Button variant="outline" onClick={() => { setViewModalOpen(false); navigate(`/menu/edit/${dishToView.id}${restaurantId ? `?restaurant=${restaurantId}` : ''}`); }}>
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '8px' }}>
                     <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                     <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>

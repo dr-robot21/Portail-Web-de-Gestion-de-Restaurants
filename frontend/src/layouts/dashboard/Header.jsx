@@ -4,7 +4,7 @@ import { MdOutlineSearch } from "react-icons/md";
 import { MdOutlineNotificationsNone } from "react-icons/md";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchNotifications, markAllNotificationsRead } from "../../store/slices/notificationsSlice";
+import { fetchNotifications, markAllNotificationsRead, markNotificationRead } from "../../store/slices/notificationsSlice";
 import api from "../../services/api";
 
 function formatTime(dateString) {
@@ -117,13 +117,36 @@ function SearchBox() {
   );
 }
 
+const entityPath = (notification) => {
+  if (!notification.entity_type || !notification.entity_id) return null;
+  switch (notification.entity_type) {
+    case 'dish':
+      return `/menu/edit/${notification.entity_id}`;
+    case 'category':
+      return '/menu/categories';
+    case 'restaurant':
+      return `/restaurants/${notification.entity_id}`;
+    case 'user':
+      return `/users/${notification.entity_id}`;
+    default:
+      return null;
+  }
+};
+
 function NotificationItem({ notification }) {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const path = entityPath(notification);
+  const clickable = path && notification.entity_action !== "deleted";
   return (
     <button
       type="button"
       className={`${styles.notification} ${notification.is_read ? "" : styles.new}`}
-      onClick={() => navigate("/notifications")}
+      onClick={() => {
+        if (!notification.is_read) dispatch(markNotificationRead(notification.id));
+        if (clickable) navigate(path);
+        else navigate("/notifications");
+      }}
     >
       <div className={styles.status}></div>
       <div className={styles.infos}>

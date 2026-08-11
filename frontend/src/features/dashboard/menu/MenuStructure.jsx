@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchCategories, addCategory, updateCategory, deleteCategory } from '../../../store/slices/categoriesSlice';
 import { fetchDishes, deleteDish, updateDish } from '../../../store/slices/dishesSlice';
@@ -16,9 +16,12 @@ import './MenuStructure.css';
 const MenuStructure = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [searchParams] = useSearchParams();
   const { user } = useSelector(state => state.auth);
   const { list: categories } = useSelector(state => state.categories);
   const { list: dishes } = useSelector(state => state.dishes);
+
+  const restaurantId = user?.restaurant_id || searchParams.get('restaurant') || null;
 
   const [categoryModalOpen, setCategoryModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
@@ -39,11 +42,11 @@ const MenuStructure = () => {
   const [deletingDish, setDeletingDish] = useState(false);
 
   useEffect(() => {
-    if (user?.restaurant_id) {
-      dispatch(fetchCategories(user.restaurant_id));
-      dispatch(fetchDishes({ restaurant_id: user.restaurant_id, per_page: 500 }));
+    if (restaurantId) {
+      dispatch(fetchCategories(restaurantId));
+      dispatch(fetchDishes({ restaurant_id: restaurantId, per_page: 500 }));
     }
-  }, [dispatch, user]);
+  }, [dispatch, restaurantId]);
 
   const dishesByCategory = (categoryId) =>
     dishes.filter(d => d.category_id === categoryId);
@@ -71,7 +74,7 @@ const MenuStructure = () => {
     const payload = { name: categoryForm.name.trim(), icon: categoryForm.icon.trim() };
     const result = editingCategory
       ? await dispatch(updateCategory({ id: editingCategory.id, data: payload }))
-      : await dispatch(addCategory({ ...payload, restaurant_id: user?.restaurant_id }));
+      : await dispatch(addCategory({ ...payload, restaurant_id: restaurantId }));
     setSubmitting(false);
 
     setCategoryModalOpen(false);
@@ -153,7 +156,7 @@ const MenuStructure = () => {
           <Button variant="outline" onClick={openAddCategory}>
             + Ajouter une Catégorie
           </Button>
-          <Button variant="primary" onClick={() => navigate('/menu/add')}>
+          <Button variant="primary" onClick={() => navigate(`/menu/add${restaurantId ? `?restaurant=${restaurantId}` : ''}`)}>
             + Ajouter un Plat
           </Button>
         </div>
@@ -203,7 +206,7 @@ const MenuStructure = () => {
                   {categoryDishes.length === 0 ? (
                     <div className="menu-structure-no-dishes">
                       Aucun plat dans cette catégorie.
-                      <Button variant="outline" size="sm" onClick={() => navigate(`/menu/add?category=${category.id}`)}>
+                      <Button variant="outline" size="sm" onClick={() => navigate(`/menu/add?category=${category.id}${restaurantId ? `&restaurant=${restaurantId}` : ''}`)}>
                         + Ajouter un plat ici
                       </Button>
                     </div>
@@ -247,7 +250,7 @@ const MenuStructure = () => {
                               <option key={cat.id} value={cat.id}>{cat.icon || '🍴'} {cat.name}</option>
                             ))}
                           </select>
-                          <button className="menu-structure-action-btn" title="Modifier" onClick={() => navigate(`/menu/edit/${dish.id}`)}>{EditIcon}</button>
+                          <button className="menu-structure-action-btn" title="Modifier" onClick={() => navigate(`/menu/edit/${dish.id}${restaurantId ? `?restaurant=${restaurantId}` : ''}`)}>{EditIcon}</button>
                           <button className="menu-structure-action-btn menu-structure-action-btn--danger" title="Supprimer" onClick={() => { setDishToDelete(dish); setDeleteDishModalOpen(true); }}>{TrashIcon}</button>
                         </div>
                       </div>

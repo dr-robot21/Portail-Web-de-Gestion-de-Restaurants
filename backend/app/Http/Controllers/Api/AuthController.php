@@ -102,7 +102,11 @@ class AuthController extends Controller
         NotificationService::notifySuperAdmins(
             'Nouveau restaurant enregistré',
             "« {$request->restaurant_name} » vient de s'inscrire sur la plateforme (gérant : {$request->name}).",
-            'success'
+            'success',
+            $restaurant->id,
+            'restaurant',
+            $restaurant->id,
+            'created'
         );
 
         NotificationService::create(

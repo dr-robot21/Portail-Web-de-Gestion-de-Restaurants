@@ -118,3 +118,35 @@
   font-size: var(--font-xs);
   color: var(--text-secondary);
 }
+
+.users-list-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.users-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: var(--radius-md);
+  background-color: transparent;
+  color: var(--text-secondary);
+  font-size: 16px;
+  cursor: pointer;
+  line-height: 1;
+  transition: all var(--transition-fast);
+}
+
+.users-action-btn:hover {
+  background-color: var(--background);
+  color: var(--text-primary);
+}
+
+.users-action-btn--danger:hover {
+  background-color: var(--error-bg);
+  color: var(--error-text);
+}

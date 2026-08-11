@@ -101,7 +101,11 @@ class RestaurantController extends Controller
         NotificationService::notifySuperAdmins(
             'Nouveau restaurant',
             "Le restaurant « {$restaurant->name} » a été ajouté par " . (auth('api')->user()->name ?? 'le super administrateur') . '.',
-            'success'
+            'success',
+            $restaurant->id,
+            'restaurant',
+            $restaurant->id,
+            'created'
         );
 
         if ($request->filled('manager_id')) {
@@ -109,7 +113,11 @@ class RestaurantController extends Controller
                 (int) $request->manager_id,
                 'Restaurant assigné',
                 "Vous avez été désigné gérant du restaurant « {$restaurant->name} ».",
-                'success'
+                'success',
+                $restaurant->id,
+                'restaurant',
+                $restaurant->id,
+                'updated'
             );
         }
 
@@ -202,7 +210,11 @@ class RestaurantController extends Controller
                     $previousManager->id,
                     'Restaurant retiré',
                     "Vous n'êtes plus gérant du restaurant « {$restaurant->name} ».",
-                    'warning'
+                    'warning',
+                    $restaurant->id,
+                    'restaurant',
+                    $restaurant->id,
+                    'updated'
                 );
             }
 
@@ -221,7 +233,11 @@ class RestaurantController extends Controller
                 (int) $request->manager_id,
                 'Restaurant assigné',
                 "Vous avez été désigné gérant du restaurant « {$restaurant->name} ».",
-                'success'
+                'success',
+                $restaurant->id,
+                'restaurant',
+                $restaurant->id,
+                'updated'
             );
         }
 
@@ -232,7 +248,10 @@ class RestaurantController extends Controller
                 $restaurant->id,
                 $restaurant->is_active ? 'Restaurant activé' : 'Restaurant désactivé',
                 "Le restaurant « {$restaurant->name} » a été {$statusLabel}.",
-                $restaurant->is_active ? 'success' : 'warning'
+                $restaurant->is_active ? 'success' : 'warning',
+                'restaurant',
+                $restaurant->id,
+                'updated'
             );
         }
 
@@ -246,14 +265,21 @@ class RestaurantController extends Controller
                     $restaurant->id,
                     'Restaurant modifié',
                     "Le restaurant « {$restaurant->name} » a été mis à jour par le super administrateur.",
-                    'info'
+                    'info',
+                    'restaurant',
+                    $restaurant->id,
+                    'updated'
                 );
             }
         } else {
             NotificationService::notifySuperAdmins(
                 'Restaurant modifié',
                 "Le restaurant « {$restaurant->name} » a été mis à jour par {$user->name}.",
-                'info'
+                'info',
+                $restaurant->id,
+                'restaurant',
+                $restaurant->id,
+                'updated'
             );
         }
 
@@ -273,7 +299,10 @@ class RestaurantController extends Controller
             $restaurant->id,
             'Restaurant supprimé',
             "Le restaurant « {$name} » a été supprimé. Votre compte reste actif mais vous n'avez plus de restaurant assigné.",
-            'warning'
+            'warning',
+            'restaurant',
+            $id,
+            'deleted'
         );
 
         $restaurant->delete();
@@ -281,7 +310,11 @@ class RestaurantController extends Controller
         NotificationService::notifySuperAdmins(
             'Restaurant supprimé',
             "Le restaurant « {$name} » a été supprimé.",
-            'warning'
+            'warning',
+            $id,
+            'restaurant',
+            $id,
+            'deleted'
         );
 
         return response()->json(['message' => 'Restaurant deleted successfully.']);

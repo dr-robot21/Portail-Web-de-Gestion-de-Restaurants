@@ -103,7 +103,10 @@ class DishController extends Controller
             $restaurantId,
             'Nouveau plat',
             "Le plat « {$dish->name} » a été ajouté au menu.",
-            'success'
+            'success',
+            'dish',
+            $dish->id,
+            'created'
         );
 
         return response()->json($dish->load('category'), 201);
@@ -172,7 +175,10 @@ class DishController extends Controller
             $dish->restaurant_id,
             'Plat modifié',
             "Le plat « {$dish->name} » a été mis à jour.",
-            'info'
+            'info',
+            'dish',
+            $dish->id,
+            'updated'
         );
 
         return response()->json($dish->fresh('category'));
@@ -203,7 +209,10 @@ class DishController extends Controller
             $restaurantId,
             'Plat supprimé',
             "Le plat « {$name} » a été retiré du menu.",
-            'warning'
+            'warning',
+            'dish',
+            $id,
+            'deleted'
         );
 
         return response()->json(['message' => 'Dish deleted successfully.']);

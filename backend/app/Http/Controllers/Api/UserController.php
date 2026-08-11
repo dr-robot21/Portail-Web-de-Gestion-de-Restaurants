@@ -76,7 +76,11 @@ class UserController extends Controller
         NotificationService::notifySuperAdmins(
             'Nouvel utilisateur',
             "Le compte « {$user->name} » ({$user->email}) a été créé.",
-            'success'
+            'success',
+            $user->restaurant_id,
+            'user',
+            $user->id,
+            'created'
         );
 
         NotificationService::create(
@@ -130,7 +134,11 @@ class UserController extends Controller
         NotificationService::notifySuperAdmins(
             'Utilisateur modifié',
             "Le compte « {$user->name} » ({$user->email}) a été mis à jour.",
-            'info'
+            'info',
+            $user->restaurant_id,
+            'user',
+            $user->id,
+            'updated'
         );
 
         if (auth('api')->id() !== $user->id) {
@@ -138,7 +146,11 @@ class UserController extends Controller
                 $user->id,
                 'Compte mis à jour',
                 'Votre compte a été mis à jour par un administrateur.',
-                'info'
+                'info',
+                $user->restaurant_id,
+                'user',
+                $user->id,
+                'updated'
             );
         }
 
@@ -164,7 +176,11 @@ class UserController extends Controller
         NotificationService::notifySuperAdmins(
             'Utilisateur supprimé',
             "Le compte « {$name} » ({$email}) a été supprimé.",
-            'warning'
+            'warning',
+            $user->restaurant_id,
+            'user',
+            $id,
+            'deleted'
         );
 
         return response()->json(['message' => 'User deleted successfully.']);

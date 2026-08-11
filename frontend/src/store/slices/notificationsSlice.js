@@ -1,9 +1,9 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../../services/api';
 
-export const fetchNotifications = createAsyncThunk('notifications/fetchAll', async (_, { rejectWithValue }) => {
+export const fetchNotifications = createAsyncThunk('notifications/fetchAll', async (params = {}, { rejectWithValue }) => {
   try {
-    const response = await api.get('/notifications');
+    const response = await api.get('/notifications', { params });
     return response.data;
   } catch (error) {
     return rejectWithValue(error.response?.data?.message || 'Failed to fetch notifications');
@@ -42,6 +42,7 @@ const notificationsSlice = createSlice({
   initialState: {
     list: [],
     pagination: {},
+    hasMore: true,
     unreadCount: 0,
     loading: false,
     error: null,
@@ -53,12 +54,25 @@ const notificationsSlice = createSlice({
       .addCase(fetchNotifications.fulfilled, (state, action) => {
         state.loading = false;
         const data = action.payload.notifications || action.payload;
-        state.list = data.data || data;
+        const incoming = Array.isArray(data) ? data : (data.data || []);
+        const page = data.current_page || 1;
+
+        const existingIds = new Set(state.list.map(n => n.id));
+        const fresh = [];
+        for (const item of incoming) {
+          if (!existingIds.has(item.id)) {
+            fresh.push(item);
+            existingIds.add(item.id);
+          }
+        }
+
+        state.list = page === 1 ? [...fresh, ...state.list] : [...state.list, ...fresh];
         state.pagination = {
           current_page: data.current_page,
           last_page: data.last_page,
           total: data.total,
         };
+        state.hasMore = (data.current_page || 1) < (data.last_page || 1);
         state.unreadCount = action.payload.unread_count ?? state.list.filter(n => !n.is_read).length;
       })
       .addCase(fetchNotifications.rejected, (state, action) => { state.loading = false; state.error = action.payload; })
